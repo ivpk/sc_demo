@@ -146,4 +146,118 @@
                 <div id="view-step-4" class="step-view">
                     <h2>4. Sutartis parengta</h2>
                     <p>[EN] Agreement Prepared & Validated</p>
-                    <p class="helper-te
+                    <p class="helper-text">Sutarties šalys, apimtys ir ODRL JSON validacija atlikta sėkmingai. Sutartis paruošta pasirašymui.</p>
+                    
+                    <div class="checklist-card">
+                        <div class="check-item verified">✓ Šalys sėkmingai identifikuotos</div>
+                        <div class="check-item verified">✓ UAPI metodika ir scopes patvirtintos</div>
+                        <div class="check-item verified">✓ ODRL JSON priedo schema yra teisinga</div>
+                    </div>
+                    
+                    <button type="button" class="btn-next-step highlight">Sugeneruoti sutartį pasirašymui ›</button>
+                </div>
+
+                <!-- STADIJA 5: Laukia pasirašymo -->
+                <div id="view-step-5" class="step-view">
+                    <h2>5. Laukia pasirašymo</h2>
+                    <p>[EN] Awaiting Signature</p>
+                    <p class="helper-text">Sutartis sugeneruota PDF formatu su integruotu JSON priedu. Atsisiųskite ją išoriniam pasirašymui kvalifikuotu el. parašu ir įkelkite pasirašytą ADOC failą.</p>
+                    
+                    <div class="action-box">
+                        <button type="button" id="generate-pdf" class="btn-download">Atsisiųsti PDF pasirašymui (PDF)</button>
+                    </div>
+
+                    <div class="upload-zone" id="adoc-upload-zone">
+                        <p>Įkelkite pasirašytą ADOC failą čia / [EN] Upload signed ADOC file here</p>
+                        <input type="file" id="adoc-file" accept=".adoc" style="display: none;">
+                        <button type="button" onclick="document.getElementById('adoc-file').click()">Naršyti failus</button>
+                        <p class="upload-status" id="upload-status">Laukia failo...</p>
+                    </div>
+                </div>
+
+                <!-- STADIJA 6: Sutartis pasirašyta -->
+                <div id="view-step-6" class="step-view">
+                    <h2>6. Sutartis pasirašyta</h2>
+                    <p>[EN] Agreement Signed Successfully</p>
+                    <div class="success-banner">
+                        <h3>Sutartis pasirašyta abiejų šalių!</h3>
+                        <p>Įkeltas ADOC failas sėkmingai patikrintas ir užregistruotas.</p>
+                    </div>
+                    <div class="signature-details">
+                        <p><strong>Parašas 1:</strong> Valstybės įmonė Registrų centras (Sertifikatas galiojantis)</p>
+                        <p><strong>Parašas 2:</strong> Martynas Mockus, VSSA (Sertifikatas galiojantis)</p>
+                    </div>
+                    <button type="button" id="btn-activate-contract" class="btn-next-step highlight">Aktyvuoti duomenų teikimą (UAPI) ›</button>
+                </div>
+
+                <!-- STADIJA 7: Sutartis įgyvendinama -->
+                <div id="view-step-7" class="step-view">
+                    <h2>7. Sutartis įgyvendinama</h2>
+                    <p>[EN] Contract Implemented & Active</p>
+                    <p class="helper-text">Duomenų mainai yra aktyvūs. Žemiau pateikiami OAUTH 2.0 prisijungimo duomenys ir UDTS testavimo konsolė.</p>
+                    
+                    <div class="api-credentials-card">
+                        <h3>OAUTH 2.0 Credentials</h3>
+                        <p><strong>Client ID:</strong> <code>vssa_client_98234a78c</code></p>
+                        <p><strong>Client Secret:</strong> <span class="masked-secret">••••••••••••••••••••</span></p>
+                    </div>
+
+                    <div class="api-console">
+                        <h3>UDTS Testavimo terminalas</h3>
+                        <button type="button" id="btn-test-api">Išbandyti UDTS užklausą (GET)</button>
+                        <pre id="api-response-output">Spustelkite mygtuką testavimui...</pre>
+                    </div>
+                    <button type="button" class="btn-terminate-contract">Nutraukti/Atšaukti sutartį</button>
+                </div>
+
+                <!-- STADIJA 8: Sutartis atšaukta -->
+                <div id="view-step-8" class="step-view">
+                    <h2>8. Sutartis atšaukta / archyvas</h2>
+                    <p>[EN] Agreement Terminated & Archived</p>
+                    <div class="error-banner">
+                        <h3>Sutartis yra NUTRAUKTA</h3>
+                        <p>Duomenų teikimas pagal šią sutartį yra pilnai sustabdytas.</p>
+                    </div>
+                    <div class="archive-info">
+                        <p><strong>Nutraukimo data:</strong> 2026-06-16 (Šiandien)</p>
+                        <p><strong>Priežastis:</strong> Pasibaigęs sutarties galiojimo terminas arba šalių susitarimu.</p>
+                    </div>
+                    <button type="button" id="btn-restart-demo">Sukurti naują sutartį iš naujo</button>
+                </div>
+
+            </div>
+
+            <!-- DEŠINĖ PUSĖ: Gyva sutarties peržiūra ir JSON priedas -->
+            <div id="pdf-content" class="preview-section">
+                <div class="paper-contract">
+                    <div class="watermark-stamp" id="contract-watermark">JUODRAŠTIS</div>
+                    <h2>Sutarties peržiūra</h2>
+                    <p>[EN] Agreement Preview</p>
+                    <hr>
+                    <div id="agreement-preview" class="agreement-text">
+                        <!-- Preview dynamic content -->
+                    </div>
+                </div>
+                
+                <div id="json-preview-container">
+                    <h3>ODRL JSON-LD Priedas / [EN] JSON Annex</h3>
+                    <pre id="json-preview">
+                        <!-- JSON schema -->
+                    </pre>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Valstybės skaitmeninių sprendimų agentūra</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
