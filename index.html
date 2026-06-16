@@ -29,6 +29,7 @@
                 <p>[EN] New Agreement Creation</p>
                 <form id="agreement-form">
                     
+                    <!-- 1. Sutarties Objektas -->
                     <fieldset>
                         <legend>I. Sutarties Objektas / [EN] Subject</legend>
                         <label for="dataset-search">Ieškoti duomenų rinkinio / [EN] Search for dataset:</label>
@@ -39,6 +40,7 @@
                         </div>
                     </fieldset>
 
+                    <!-- 2. Sutarties Šalys -->
                     <fieldset>
                         <legend>II. Sutarties Šalys / [EN] Parties</legend>
                         <h3>Duomenų teikėjas / [EN] Data Provider (užpildoma automatiškai)</h3>
@@ -56,14 +58,15 @@
                         <input type="text" id="assigneeRep" name="assigneeRep" readonly>
                     </fieldset>
                     
+                    <!-- 3. Teisinis Pagrindas ir Tikslas -->
                     <fieldset>
                         <legend>III. Teisinis Pagrindas ir Tikslas</legend>
-                        <!-- Pakeisti laukai pagal prašymą -->
+                        
                         <label for="legalBasis">Duomenų teikimo teisinis pagrindas / [EN] Legal Basis for Data Provision:</label>
-                        <input type="text" id="legalBasis" name="legalBasis" value="Vykdoma viešoji užduotis">
+                        <input type="text" id="legalBasis" name="legalBasis" value="Elektroninio archyvo informacinės sistemos nuostatų 23.2 p.">
                         
                         <label for="dataPurpose">Duomenų tvarkymo tikslas / [EN] Data Processing Purpose:</label>
-                        <input type="text" id="dataPurpose" name="dataPurpose" value="Statistikos ir analizės tikslais">
+                        <textarea id="dataPurpose" name="dataPurpose" rows="4" style="width: 100%; padding: 8px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit;">EAIS tikslas – skaitmenizuoti Nacionalinio dokumentų fondo (toliau – NDF) dokumentų apskaitos dokumentų derinimo, nuolat saugomų dokumentų, ISR duomenų perdavimo valstybės archyvams, aprašymo, saugojimo, valstybės archyvų saugomo skaitmeninio turinio pateikimo naudotojams procesus.</textarea>
                         
                         <label for="paymentTerms">Mokėjimo sąlygos / [EN] Payment Terms:</label>
                         <select id="paymentTerms" name="paymentTerms">
@@ -95,7 +98,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Valstybės skaitmeninių sprendimų agentūra</p>
+            <p>&copy; 2026 Valstybės skaitmeninių sprendimų agentūra</p>
         </div>
     </footer>
     
