@@ -13,8 +13,7 @@
             <h1>Išmaniųjų duomenų sutarčių modulis</h1>
             <p>[EN] Smart Data Contracts Module</p>
             <nav>
-                <a href="https://ivpk.github.io/uapi/#section/Concepts" target="_blank">Apie UAPI</a>
-                <a href="https://github.com/ivpk/smart_contracts" target="_blank">Įkvėpimo šaltinis</a>
+                <!-- Nuorodos pašalintos pagal prašymą -->
                 <div class="lang-switch">
                     <button id="lang-lt" class="active">LT</button>
                     <button id="lang-en">EN</button>
@@ -25,46 +24,44 @@
 
     <main class="container">
         <div class="grid-container">
-            <!-- Agreement Setup Form -->
+            <!-- Form section -->
             <div class="form-section">
                 <h2>Naujos sutarties sudarymas</h2>
                 <p>[EN] New Agreement Creation</p>
                 <form id="agreement-form">
+                    
+                    <!-- 1. Sutarties Objektas (perkelta į viršų) -->
                     <fieldset>
-                        <legend>I. Sutarties Šalys / [EN] Parties</legend>
-                        <h3>Duomenų teikėjas / [EN] Data Provider</h3>
-                        <label for="assignerName">Pavadinimas / [EN] Name:</label>
-                        <input type="text" id="assignerName" name="assignerName" value="Valstybės įmonė Registrų centras">
-                        <label for="assignerCode">Kodas / [EN] Code:</label>
-                        <input type="text" id="assignerCode" name="assignerCode" value="124110246">
-                         <label for="assignerRep">Atstovas / [EN] Representative:</label>
-                        <input type="text" id="assignerRep" name="assignerRep" value="Testas Testuotojas">
-
-                        <h3>Duomenų gavėjas / [EN] Data Recipient</h3>
-                        <label for="assigneeName">Pavadinimas / [EN] Name:</label>
-                        <input type="text" id="assigneeName" name="assigneeName" value="Valstybės skaitmeninių sprendimų agentūra">
-                        <label for="assigneeCode">Kodas / [EN] Code:</label>
-                        <input type="text" id="assigneeCode" name="assigneeCode" value="188772433">
-                        <label for="assigneeRep">Atstovas / [EN] Representative:</label>
-                        <input type="text" id="assigneeRep" name="assigneeRep" value="Martynas Mockus">
-                    </fieldset>
-
-                    <fieldset>
-                        <legend>II. Sutarties Objektas / [EN] Subject</legend>
-                        <p>Pasirinkite duomenis, kuriuos norite įtraukti į sutartį. Galite rinktis pagal duomenų rinkinį, modelį arba konkrečią savybę, naudojant UAPI formato URI.</p>
-                        <p>[EN] Select the data to be included in the agreement. You can select by dataset, model, or specific property using UAPI URI format.</p>
+                        <legend>I. Sutarties Objektas / [EN] Subject</legend>
+                        <label for="dataset-search">Ieškoti duomenų rinkinio / [EN] Search for dataset:</label>
+                        <input type="search" id="dataset-search" placeholder="Įveskite rinkinio pavadinimą...">
+                        <p class="small-text">Demonstraciniais tikslais rodomi VĮ "Registrų centras" duomenų rinkiniai.</p>
                         <div id="datasets-selection">
-                            <div class="dataset-item">
-                                <label><input type="checkbox" class="dataset-check" value="3987" data-name="Pagrindinių asmens GR duomenų rinkinys" data-scopes="uapi:/n588_pagrindiniu_asmens_duomenu_rinkinys/:getall,uapi:/n588_pagrindiniu_asmens_duomenu_rinkinys/:search,uapi:/n588_pagrindiniu_asmens_duomenu_rinkinys/:select" checked> Pagrindinių asmens GR duomenų rinkinys</label>
-                            </div>
-                             <div class="dataset-item">
-                                <label><input type="checkbox" class="dataset-check" value="4071" data-name="JADIS 249 išrašas" data-scopes="uapi:/datasets/gov/rc/jadis/n249_ja_israsas/:getall,uapi:/datasets/gov/rc/jadis/n249_ja_israsas/:search,uapi:/datasets/gov/rc/jadis/n249_ja_israsas/:select" checked> JADIS 249 išrašas</label>
-                            </div>
+                            <!-- Duomenų rinkiniai bus įkelti čia su JavaScript -->
                         </div>
                     </fieldset>
-                    
+
+                    <!-- 2. Sutarties Šalys (dabar pildoma automatiškai) -->
                     <fieldset>
-                        <legend>VI. Atsiskaitymo Sąlygos / [EN] Payment Terms</legend>
+                        <legend>II. Sutarties Šalys / [EN] Parties</legend>
+                        <h3>Duomenų teikėjas / [EN] Data Provider (užpildoma automatiškai)</h3>
+                        <label for="assignerName">Pavadinimas / [EN] Name:</label>
+                        <input type="text" id="assignerName" name="assignerName" readonly>
+                        <label for="assignerCode">Kodas / [EN] Code:</label>
+                        <input type="text" id="assignerCode" name="assignerCode" readonly>
+
+                        <h3>Duomenų gavėjas / [EN] Data Recipient (prisijungęs vartotojas)</h3>
+                        <label for="assigneeName">Pavadinimas / [EN] Name:</label>
+                        <input type="text" id="assigneeName" name="assigneeName" readonly>
+                        <label for="assigneeCode">Kodas / [EN] Code:</label>
+                        <input type="text" id="assigneeCode" name="assigneeCode" readonly>
+                        <label for="assigneeRep">Atstovas / [EN] Representative:</label>
+                        <input type="text" id="assigneeRep" name="assigneeRep" readonly>
+                    </fieldset>
+                    
+                    <!-- 3. Kitos sąlygos -->
+                    <fieldset>
+                        <legend>III. Papildomos Sąlygos / [EN] Additional Terms</legend>
                          <label for="paymentTerms">Mokėjimo sąlygos / [EN] Payment Terms:</label>
                         <select id="paymentTerms" name="paymentTerms">
                             <option value="Neatlygintina">Neatlygintina / [EN] Free of charge</option>
@@ -78,17 +75,15 @@
                     </fieldset>
 
                     <button type="button" id="generate-pdf">Generuoti PDF / [EN] Generate PDF</button>
-                    <p class="small-text">Sugeneruotas PDF bus paruoštas išoriniam pasirašymui kvalifikuotu e. parašu ir įkėlimui į sistemą ADOC formatu.</p>
-                    <p class="small-text">[EN] The generated PDF will be ready for external signing with a qualified e-signature and for upload into the system in ADOC format.</p>
                 </form>
             </div>
 
-            <!-- Agreement Preview -->
+            <!-- Preview section -->
             <div id="pdf-content" class="preview-section">
                 <h2>Sutarties peržiūra</h2>
                 <p>[EN] Agreement Preview</p>
                 <div id="agreement-preview" class="agreement-text">
-                    <!-- Preview will be inserted here by JavaScript -->
+                    <!-- Preview will be inserted here -->
                 </div>
                 <div id="json-preview-container">
                     <h3>JSON Priedas / [EN] JSON Annex</h3>
