@@ -1,10 +1,12 @@
 :root {
     --primary-color: #005aa3;
-    --secondary-color: #f0f8ff;
-    --text-color: #333;
-    --border-color: #ddd;
-    --header-bg: #fff;
-    --body-bg: #f9f9f9;
+    --success-color: #2e7d32;
+    --warning-color: #ed6c02;
+    --danger-color: #d32f2f;
+    --text-color: #2c3e50;
+    --border-color: #cfd8dc;
+    --body-bg: #f5f7fa;
+    --card-bg: #ffffff;
 }
 
 body {
@@ -22,169 +24,474 @@ body {
 }
 
 header {
-    background-color: var(--header-bg);
+    background-color: white;
     border-bottom: 2px solid var(--border-color);
-    padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 1.5rem 0;
+    text-align: center;
 }
 
 header h1 {
     color: var(--primary-color);
     margin: 0;
+    font-size: 1.8rem;
 }
 
 header p {
-    margin: 0;
+    margin: 5px 0 0 0;
     font-style: italic;
-    color: #666;
+    color: #607d8b;
 }
 
-header nav {
+/* LEGAL DESIGN: Stepper stilius */
+.stepper-section {
+    background-color: white;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.stepper::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 5%;
+    right: 5%;
+    height: 3px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.step:hover {
+    transform: translateY(-2px);
+}
+
+.step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    border: 3px solid var(--border-color);
     display: flex;
     align-items: center;
-    gap: 20px;
-    margin-top: 10px;
+    justify-content: center;
+    font-weight: bold;
+    color: #90a4ae;
+    transition: all 0.3s ease;
 }
 
-header nav a {
-    text-decoration: none;
-    color: var(--primary-color);
-    font-weight: 500;
+.step-title {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: #90a4ae;
+    line-height: 1.2;
 }
 
-.lang-switch {
-    margin-left: auto;
+.step-title span {
+    font-size: 0.65rem;
+    font-weight: normal;
+    color: #b0bec5;
 }
 
-.lang-switch button {
-    background: none;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.lang-switch button.active {
+/* Aktyvaus / Praeito žingsnio stiliai */
+.step.active .step-num {
+    border-color: var(--primary-color);
     background-color: var(--primary-color);
     color: white;
 }
 
-main {
-    padding: 2rem 0;
+.step.active .step-title {
+    color: var(--primary-color);
 }
 
+.step.completed .step-num {
+    border-color: var(--success-color);
+    background-color: var(--success-color);
+    color: white;
+}
+
+.step.completed .step-title {
+    color: var(--success-color);
+}
+
+/* Grido struktūra */
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
+    grid-template-columns: 1.1fr 1.3fr;
     gap: 2rem;
+    margin-top: 2rem;
 }
 
 .form-section, .preview-section {
-    background-color: white;
-    padding: 1.5rem;
+    background-color: var(--card-bg);
+    padding: 2rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+/* Dinaminis žingsnių rodymas */
+.step-view {
+    display: none;
+}
+
+.step-view.active {
+    display: block;
 }
 
 h2 {
     color: var(--primary-color);
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 10px;
     margin-top: 0;
+    margin-bottom: 5px;
 }
 
 h2 + p {
     font-style: italic;
-    color: #666;
-    margin-top: -10px;
-    margin-bottom: 20px;
-}
-
-form fieldset {
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+    color: #607d8b;
     margin-bottom: 1.5rem;
-    padding: 1rem;
 }
 
-form legend {
+.helper-text {
+    background-color: #eef5f9;
+    border-left: 4px solid var(--primary-color);
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Formų stiliai */
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+}
+
+legend {
     font-weight: bold;
     color: var(--primary-color);
-    padding: 0 10px;
+    padding: 0 8px;
 }
 
-form label {
+label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
 }
 
-form input[type="text"], form select {
+input[type="text"], input[type="search"], select, textarea {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 1.2rem;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-color);
 }
 
-#datasets-selection .dataset-item {
-    margin-bottom: 10px;
+input[readonly] {
+    background-color: #f1f3f4;
+    color: #5f6368;
+    cursor: not-allowed;
 }
 
-button#generate-pdf {
+/* Duomenų rinkinių pasirinkimo zona */
+.datasets-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fafbfc;
+}
+
+.dataset-item {
+    padding: 8px;
+    border-bottom: 1px solid #eceff1;
+}
+
+.dataset-item:last-child {
+    border-bottom: none;
+}
+
+.dataset-item label {
+    font-weight: normal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Mygtukų stiliai */
+button {
     background-color: var(--primary-color);
     color: white;
     padding: 12px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    width: 100%;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
 }
 
-button#generate-pdf:hover {
+button:hover {
     background-color: #004b8d;
 }
 
-.small-text {
-    font-size: 0.8rem;
-    color: #666;
+.btn-next-step {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-next-step.highlight {
+    background-color: var(--success-color);
+}
+
+.btn-next-step.highlight:hover {
+    background-color: #1b5e20;
+}
+
+/* 2 Žingsnis: Konsultavimo pokalbiai */
+.chat-box {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    height: 220px;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #fafbfc;
+    margin-bottom: 1rem;
+}
+
+.chat-message {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    font-size: 0.88rem;
+}
+
+.chat-message.receiver {
+    background-color: #e3f2fd;
+    margin-right: auto;
+    border-bottom-left-radius: 2px;
+}
+
+.chat-message.provider {
+    background-color: #e8f5e9;
+    margin-left: auto;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-area input {
+    flex: 1;
+}
+
+/* 3 Žingsnis: Derybų kortelė */
+.negotiation-card, .checklist-card, .api-credentials-card {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1.5rem;
+    background-color: #fafbfc;
+    margin-bottom: 1.5rem;
+}
+
+.negotiation-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.negotiation-status.pending {
+    background-color: #fff3e0;
+    color: var(--warning-color);
+}
+
+.negotiation-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-action-approve {
+    background-color: var(--success-color);
+    padding: 8px 15px;
+    font-size: 0.85rem;
+}
+
+.btn-action-counter {
+    background-color: var(--warning-color);
+    padding: 8px 15px;
+    font-size: 0.85rem;
+}
+
+/* Checklist stilius */
+.check-item {
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.check-item.verified {
+    color: var(--success-color);
+}
+
+/* 5 Žingsnis: Parašo zona */
+.upload-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #fafbfc;
+    margin-top: 1.5rem;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    border-color: var(--primary-color);
+}
+
+.upload-status {
     margin-top: 10px;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* Baneriai */
+.success-banner, .error-banner {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.success-banner {
+    background-color: var(--success-color);
+}
+
+.error-banner {
+    background-color: var(--danger-color);
+}
+
+/* API testavimo konsolė */
+.api-console {
+    background-color: #212121;
+    color: #4caf50;
+    padding: 15px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    margin-top: 1.5rem;
+}
+
+.api-console button {
+    background-color: #333333;
+    border: 1px solid #4caf50;
+    color: #4caf50;
+    margin-bottom: 10px;
+}
+
+.api-console button:hover {
+    background-color: #4caf50;
+    color: black;
+}
+
+#api-response-output {
+    white-space: pre-wrap;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 0;
+}
+
+/* DEŠINĖ PUSĖ: Popierinės sutarties simuliavimas */
+.paper-contract {
+    position: relative;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    padding: 2.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 4px;
+    min-height: 450px;
+    overflow: hidden;
+}
+
+/* Vandens ženklas sutartyje */
+.watermark-stamp {
+    position: absolute;
+    top: 40px;
+    right: -30px;
+    transform: rotate(15deg);
+    border: 4px solid var(--warning-color);
+    color: var(--warning-color);
+    padding: 8px 18px;
+    font-weight: 900;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    opacity: 0.8;
+    z-index: 10;
 }
 
 .agreement-text {
-    border: 1px solid var(--border-color);
-    padding: 15px;
-    height: 60vh;
-    overflow-y: auto;
-    background-color: #fdfdfd;
     white-space: pre-wrap;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.5;
+    color: #37474f;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 #json-preview-container {
-    margin-top: 20px;
+    margin-top: 2rem;
 }
 
 #json-preview {
-    background-color: #2d2d2d;
-    color: #f8f8f2;
-    padding: 15px;
-    border-radius: 5px;
+    background-color: #1e293b;
+    color: #f8fafc;
+    padding: 1.2rem;
+    border-radius: 6px;
     white-space: pre-wrap;
     word-break: break-all;
-    height: 300px;
+    height: 250px;
     overflow-y: auto;
+    font-size: 0.8rem;
 }
 
 footer {
     text-align: center;
     padding: 1.5rem 0;
-    margin-top: 2rem;
-    background-color: #e9ecef;
+    margin-top: 3rem;
+    background-color: #eceff1;
     border-top: 1px solid var(--border-color);
-    font-size: 0.9rem;
 }
