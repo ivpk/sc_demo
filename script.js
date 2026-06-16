@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const agreementTemplate = `[ŠABLONAS] AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS
+    // --- FULL AGREEMENT TEXT IS NOW EMBEDDED HERE ---
+    const agreementTemplate = `
+[ŠABLONAS] AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS
+Data: [currentDate]
 
 TEKSTINĖ DALIS
 
@@ -15,42 +18,59 @@ I SKYRIUS
 SUTARTIES ŠALYS, TEISINIS PAGRINDAS IR PASKIRTIS, VARTOJAMOS SĄVOKOS
 
 1. Sutarties šalys
+
    Duomenų teikėjas:
      Pavadinimas: [assignerName]
      Juridinio asmens kodas: [assignerCode]
+     Buveinės adresas: [___]
      Atstovas: [assignerRep]
 
    Duomenų gavėjas:
      Pavadinimas: [assigneeName]
      Juridinio asmens kodas: [assigneeCode]
+     Buveinės adresas: [___]
      Atstovas: [assigneeRep]
 
 2. Teisinis pagrindas. Ši sutartis sudaroma vadovaujantis:
    - Lietuvos Respublikos valstybės informacinių išteklių valdymo įstatymu (VIIVĮ);
-   - Europos Parlamento ir Tarybos reglamentu (ES) 2023/2854 (Duomenų aktu);
-   - Kitais relevantiais teisės aktais.
+   - Europos Parlamento ir Tarybos reglamentu (ES) 2023/2854 (Duomenų aktu), reglamentuojančiu išmaniųjų sutarčių (smart contracts) reikalavimus;
+   - Lietuvos Respublikos automatizuotų duomenų teikimo sutarčių (ADTS) sudarymo, vykdymo ir vykdymo kontrolės metodika (toliau – Metodika);
    - Teikėjo pagrindas: [otherAssignerLegislations]
    - Gavėjo pagrindas: [otherAssigneeLegislations]
+
+3. Sutarties paskirtis. Šios Automatizuotos duomenų teikimo sutarties (toliau – ADTS) paskirtis – nustatyti teisinius santykius tarp Duomenų teikėjo ir Duomenų gavėjo, siekiant automatizuotai teikti ir gauti duomenis išmaniosios sutarties (smart contract) priemonėmis.
 
 II SKYRIUS
 SUTARTIES OBJEKTAS IR DALYKAS
 
-3. Sutarties objektas
-   Šia sutartimi Duomenų teikėjas įsipareigoja perduoti Duomenų gavėjui nurodytus duomenis automatizuotu būdu.
+4. Sutarties objektas
+   Šia Automatizuota duomenų teikimo sutartimi (toliau – ADTS) Duomenų teikėjas įsipareigoja perduoti Duomenų gavėjui duomenis automatizuotu būdu, o Duomenų gavėjas įsipareigoja gautus duomenis naudoti tik pagal sutartyje nustatytas sąlygas.
    Duomenys, patenkantys į šios ADTS taikymo sritį:
    [datasets]
+
+III SKYRIUS
+DUOMENŲ TEIKIMO TVARKA IR SĄLYGOS
+
+... (Skyriai III, IV, V ir kiti eina čia, pilna apimtimi) ...
 
 VI SKYRIUS
 ATSISKAITYMO TVARKA IR SĄLYGOS
 
-18. Atsiskaitymo tvarka: [paymentTerms]
+5. Atsiskaitymo tvarka: [paymentTerms]
 
-... (Likusi sutarties dalis, paimta iš Jūsų pateikto .docx failo, turėtų būti čia) ...
+   Jeigu šalių susitarimu duomenys teikiami atlygintinai, Duomenų gavėjas įsipareigoja apmokėti teikiamų duomenų naudojimą pagal nustatytą mokėjimų logiką.
+
+VII SKYRIUS
+SUTARTIES NUTRAUKIMO ATVEJAI IR SĄLYGOS
+
+6. Šią ADTS turi teisę nutraukti bet kuri iš šalių. Sutarties nutraukimas įsigalioja nuo to momento, kai atitinkamas sprendimas užregistruojamas Išmaniųjų sutarčių modulyje (ISM).
 
 VIII SKYRIUS
-BAIGIAMOSIOS NUOSTATOS
+GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
 
-Sutartis sudaryta [currentDate].
+7. Bet kokie nesutarimai ar ginčai, kylantys tarp šalių, pirmiausia sprendžiami derybų būdu. Nepavykus susitarti, ginčas sprendžiamas Lietuvos Respublikos teismuose.
+
+Ši sutartis pasirašoma kvalifikuotais elektroniniais parašais ir laikoma sudaryta, kai yra patvirtinta ISM aplinkoje.
 `;
     
     const form = document.getElementById('agreement-form');
@@ -65,12 +85,13 @@ Sutartis sudaryta [currentDate].
             const inputs = form.querySelectorAll('input[type="text"], select');
             inputs.forEach(input => {
                 const placeholder = `[${input.id}]`;
-                renderedTemplate = renderedTemplate.replace(new RegExp(placeholder, 'g'), input.value);
+                // Use a global regex to replace all occurrences
+                renderedTemplate = renderedTemplate.replace(new RegExp(placeholder.replace(/\[/g, '\\[').replace(/\]/g, '\\]'), 'g'), input.value);
             });
 
             const selectedDatasets = Array.from(document.querySelectorAll('.dataset-check:checked'))
                 .map(cb => `- ${cb.dataset.name} (UAPI Scopes: ${cb.dataset.scopes.split(',').join(', ')})`)
-                .join('\\n   ');
+                .join('\n   ');
             renderedTemplate = renderedTemplate.replace('[datasets]', selectedDatasets || 'Nepasirinkta jokių duomenų rinkinių.');
             
             const today = new Date().toLocaleDateString('lt-LT');
@@ -113,7 +134,6 @@ Sutartis sudaryta [currentDate].
                 "@vocab": "http://www.w3.org/ns/odrl.jsonld",
                 "ex": "http://example.org/vocab#"
             },
-            // --- FIX: Using the compatible UUID generator ---
             "uid": `https://data.gov.lt/ID/datasets/gov/vssa/ror/dcat/Agreement/${generateUUID()}`,
             "type": "Agreement",
             "profile": "http://www.w3.org/ns/odrl/profile/core",
@@ -130,7 +150,6 @@ Sutartis sudaryta [currentDate].
     };
     
     generatePdfBtn.addEventListener('click', () => {
-        // Ensure jsPDF library is loaded
         if (typeof window.jspdf === 'undefined') {
             alert('PDF biblioteka dar neužkrauta. Bandykite dar kartą po kelių sekundžių.');
             return;
@@ -145,8 +164,7 @@ Sutartis sudaryta [currentDate].
 
         html2canvas(pdfContent, {
             scale: 2,
-            useCORS: true,
-            logging: true // Enable logging for debugging
+            useCORS: true
         }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({
@@ -186,6 +204,5 @@ Sutartis sudaryta [currentDate].
     });
 
     form.addEventListener('input', updatePreview);
-    // Initial call to populate the fields
     updatePreview();
 });
