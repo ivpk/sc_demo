@@ -13,7 +13,6 @@
             <h1>Išmaniųjų duomenų sutarčių modulis</h1>
             <p>[EN] Smart Data Contracts Module</p>
             <nav>
-                <!-- Nuorodos pašalintos pagal prašymą -->
                 <div class="lang-switch">
                     <button id="lang-lt" class="active">LT</button>
                     <button id="lang-en">EN</button>
@@ -30,7 +29,6 @@
                 <p>[EN] New Agreement Creation</p>
                 <form id="agreement-form">
                     
-                    <!-- 1. Sutarties Objektas (perkelta į viršų) -->
                     <fieldset>
                         <legend>I. Sutarties Objektas / [EN] Subject</legend>
                         <label for="dataset-search">Ieškoti duomenų rinkinio / [EN] Search for dataset:</label>
@@ -41,7 +39,6 @@
                         </div>
                     </fieldset>
 
-                    <!-- 2. Sutarties Šalys (dabar pildoma automatiškai) -->
                     <fieldset>
                         <legend>II. Sutarties Šalys / [EN] Parties</legend>
                         <h3>Duomenų teikėjas / [EN] Data Provider (užpildoma automatiškai)</h3>
@@ -59,19 +56,20 @@
                         <input type="text" id="assigneeRep" name="assigneeRep" readonly>
                     </fieldset>
                     
-                    <!-- 3. Kitos sąlygos -->
                     <fieldset>
-                        <legend>III. Papildomos Sąlygos / [EN] Additional Terms</legend>
-                         <label for="paymentTerms">Mokėjimo sąlygos / [EN] Payment Terms:</label>
+                        <legend>III. Teisinis Pagrindas ir Tikslas</legend>
+                        <!-- Pakeisti laukai pagal prašymą -->
+                        <label for="legalBasis">Duomenų teikimo teisinis pagrindas / [EN] Legal Basis for Data Provision:</label>
+                        <input type="text" id="legalBasis" name="legalBasis" value="Vykdoma viešoji užduotis">
+                        
+                        <label for="dataPurpose">Duomenų tvarkymo tikslas / [EN] Data Processing Purpose:</label>
+                        <input type="text" id="dataPurpose" name="dataPurpose" value="Statistikos ir analizės tikslais">
+                        
+                        <label for="paymentTerms">Mokėjimo sąlygos / [EN] Payment Terms:</label>
                         <select id="paymentTerms" name="paymentTerms">
                             <option value="Neatlygintina">Neatlygintina / [EN] Free of charge</option>
                             <option value="Avansinis mokėjimas">Avansinis mokėjimas / [EN] Advance payment</option>
-                            <option value="Fiksuotas mokestis">Fiksuotas mokestis / [EN] Fixed fee</option>
                         </select>
-                        <label for="otherAssignerLegislations">Kiti teikėjo teisiniai pagrindai / [EN] Other provider legislations:</label>
-                        <input type="text" id="otherAssignerLegislations" name="otherAssignerLegislations" value="Testinis pagrindas">
-                        <label for="otherAssigneeLegislations">Kiti gavėjo teisiniai pagrindai / [EN] Other recipient legislations:</label>
-                        <input type="text" id="otherAssigneeLegislations" name="otherAssigneeLegislations" value="Testinis pagrindas">
                     </fieldset>
 
                     <button type="button" id="generate-pdf">Generuoti PDF / [EN] Generate PDF</button>
