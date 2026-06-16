@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // A-Z unikalaus ID generavimas (suderinamas su visomis naršyklėmis)
+    const generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    };
+
     // --- DUOMENŲ BAZĖS SIMULIACIJA ---
     const demoDatasets = [
         { id: 3987, name: "Juridinių asmenų registro duomenys (RAW data)", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/jar/imones/:getall,uapi:/jar/imones/:search" },
@@ -18,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PILNAS SUTARTIES TEKSTAS ---
     const agreementTemplate = `
-[ŠABLONAS] AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS
-Data: [currentDate]
+AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS
+Sudarymo data: [currentDate]
 
 I SKYRIUS
 SUTARTIES ŠALYS, TEISINIS PAGRINDAS IR PASKIRTIS
@@ -28,14 +36,13 @@ SUTARTIES ŠALYS, TEISINIS PAGRINDAS IR PASKIRTIS
    Duomenų teikėjas:
      Pavadinimas: [assignerName]
      Juridinio asmens kodas: [assignerCode]
-     Atstovas: [___]
 
    Duomenų gavėjas:
      Pavadinimas: [assigneeName]
      Juridinio asmens kodas: [assigneeCode]
      Atstovas: [assigneeRep]
 
-2. Teisinis pagrindas ir tikslas
+2. Teisinis pagrindas ir tikslas:
    Ši sutartis sudaroma vadovaujantis:
    - Lietuvos Respublikos valstybės informacinių išteklių valdymo įstatymu (VIIVĮ);
    - Duomenų teikimo teisinis pagrindas: [legalBasis]
@@ -87,6 +94,7 @@ GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
 15. Sutartis pasirašoma kvalifikuotais elektroniniais parašais.
 `;
 
+    // Duomenų rinkinių atvaizdavimas
     const renderDatasets = (datasets) => {
         datasetsContainer.innerHTML = datasets.length ? '' : '<p>Pagal paiešką rinkinių nerasta.</p>';
         datasets.forEach(ds => {
@@ -97,11 +105,13 @@ GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
         });
     };
 
+    // Dinaminė paieška
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         renderDatasets(demoDatasets.filter(ds => ds.name.toLowerCase().includes(query)));
     });
 
+    // Sekame formos pasikeitimus
     form.addEventListener('input', () => updatePreview());
     form.addEventListener('change', (e) => {
         if (e.target.classList.contains('dataset-check')) {
@@ -114,12 +124,15 @@ GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
 
     const updatePreview = () => {
         let renderedTemplate = agreementTemplate;
-        const inputs = form.querySelectorAll('input[type="text"], input[type="search"], select');
+        
+        // Pakeičiame tekstinius laukus ir textarea lauką
+        const inputs = form.querySelectorAll('input[type="text"], input[type="search"], textarea, select');
         inputs.forEach(input => {
             const placeholder = `\\[${input.id}\\]`;
             renderedTemplate = renderedTemplate.replace(new RegExp(placeholder, 'g'), input.value);
         });
         
+        // Pridedame pasirinktus duomenų rinkinius
         const selectedDatasets = Array.from(document.querySelectorAll('.dataset-check:checked'))
             .map(cb => `- ${cb.dataset.name}`).join('\n   ');
         renderedTemplate = renderedTemplate.replace('[datasets]', selectedDatasets || 'Nepasirinkta jokių duomenų rinkinių.');
@@ -131,13 +144,24 @@ GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
 
     const updateJsonPreview = () => {
         const jsonObject = {
-            "@context": { "@vocab": "http://www.w3.org/ns/odrl.jsonld", "ex": "http://example.org/vocab#" },
+            "@context": { 
+                "@vocab": "http://www.w3.org/ns/odrl.jsonld", 
+                "ex": "http://example.org/vocab#" 
+            },
             "uid": `https://data.gov.lt/ID/Agreement/${Date.now()}`,
             "type": "Agreement",
             "issued": new Date().toISOString().split('T')[0],
-            "assigner": [{ "uid": document.getElementById('assignerCode').value || "UNKNOWN", "ex:companyName": document.getElementById('assignerName').value, "ex:companyCode": document.getElementById('assignerCode').value }],
-            "assignee": [{ "uid": loggedInUser.code, "ex:companyName": loggedInUser.name, "ex:companyCode": loggedInUser.code, "ex:representative": loggedInUser.representative }],
-            // Atnaujinta JSON struktūra
+            "assigner": [{ 
+                "uid": document.getElementById('assignerCode').value || "UNKNOWN", 
+                "ex:companyName": document.getElementById('assignerName').value, 
+                "ex:companyCode": document.getElementById('assignerCode').value 
+            }],
+            "assignee": [{ 
+                "uid": loggedInUser.code, 
+                "ex:companyName": loggedInUser.name, 
+                "ex:companyCode": loggedInUser.code, 
+                "ex:representative": loggedInUser.representative 
+            }],
             "ex:legalBasis": document.getElementById('legalBasis').value,
             "permission": Array.from(document.querySelectorAll('.dataset-check:checked')).map(cb => ({
                 "target": {
@@ -157,7 +181,7 @@ GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
         jsonPreviewEl.textContent = JSON.stringify(jsonObject, null, 2);
     };
 
-    // PDF generavimo funkcija (nepakeista)
+    // PDF Generavimas
     document.getElementById('generate-pdf').addEventListener('click', () => {
         const { jsPDF } = window.jspdf;
         html2canvas(document.getElementById('pdf-content'), { scale: 2 }).then(canvas => {
@@ -170,10 +194,11 @@ GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
         });
     });
 
-    // Pradinis puslapio paruošimas
+    // Pradinis puslapio užpildymas
     document.getElementById('assigneeName').value = loggedInUser.name;
     document.getElementById('assigneeCode').value = loggedInUser.code;
     document.getElementById('assigneeRep').value = loggedInUser.representative;
+    
     renderDatasets(demoDatasets);
     updatePreview();
 });
