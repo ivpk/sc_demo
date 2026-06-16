@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // A simple, universally compatible function to generate a random ID.
+    const generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    };
+
     const agreementTemplate = `[ŠABLONAS] AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS
 
 TEKSTINĖ DALIS
@@ -51,24 +59,29 @@ Sutartis sudaryta [currentDate].
     const generatePdfBtn = document.getElementById('generate-pdf');
 
     const updatePreview = () => {
-        let renderedTemplate = agreementTemplate;
-        
-        const inputs = form.querySelectorAll('input[type="text"], select');
-        inputs.forEach(input => {
-            const placeholder = `[${input.id}]`;
-            renderedTemplate = renderedTemplate.replace(new RegExp(placeholder, 'g'), input.value);
-        });
+        try {
+            let renderedTemplate = agreementTemplate;
+            
+            const inputs = form.querySelectorAll('input[type="text"], select');
+            inputs.forEach(input => {
+                const placeholder = `[${input.id}]`;
+                renderedTemplate = renderedTemplate.replace(new RegExp(placeholder, 'g'), input.value);
+            });
 
-        const selectedDatasets = Array.from(document.querySelectorAll('.dataset-check:checked'))
-            .map(cb => `- ${cb.dataset.name} (UAPI Scopes: ${cb.dataset.scopes.split(',').join(', ')})`)
-            .join('\n   ');
-        renderedTemplate = renderedTemplate.replace('[datasets]', selectedDatasets || 'Nepasirinkta jokių duomenų rinkinių.');
-        
-        const today = new Date().toLocaleDateString('lt-LT');
-        renderedTemplate = renderedTemplate.replace('[currentDate]', today);
+            const selectedDatasets = Array.from(document.querySelectorAll('.dataset-check:checked'))
+                .map(cb => `- ${cb.dataset.name} (UAPI Scopes: ${cb.dataset.scopes.split(',').join(', ')})`)
+                .join('\\n   ');
+            renderedTemplate = renderedTemplate.replace('[datasets]', selectedDatasets || 'Nepasirinkta jokių duomenų rinkinių.');
+            
+            const today = new Date().toLocaleDateString('lt-LT');
+            renderedTemplate = renderedTemplate.replace('[currentDate]', today);
 
-        previewEl.textContent = renderedTemplate;
-        updateJsonPreview();
+            previewEl.textContent = renderedTemplate;
+            updateJsonPreview();
+        } catch (e) {
+            console.error("Error in updatePreview:", e);
+            previewEl.textContent = "Klaida generuojant peržiūrą. Patikrinkite konsolę.";
+        }
     };
 
     const updateJsonPreview = () => {
@@ -100,7 +113,8 @@ Sutartis sudaryta [currentDate].
                 "@vocab": "http://www.w3.org/ns/odrl.jsonld",
                 "ex": "http://example.org/vocab#"
             },
-            "uid": `https://data.gov.lt/ID/datasets/gov/vssa/ror/dcat/Agreement/${crypto.randomUUID()}`,
+            // --- FIX: Using the compatible UUID generator ---
+            "uid": `https://data.gov.lt/ID/datasets/gov/vssa/ror/dcat/Agreement/${generateUUID()}`,
             "type": "Agreement",
             "profile": "http://www.w3.org/ns/odrl/profile/core",
             "issued": new Date().toISOString().split('T')[0],
@@ -116,6 +130,12 @@ Sutartis sudaryta [currentDate].
     };
     
     generatePdfBtn.addEventListener('click', () => {
+        // Ensure jsPDF library is loaded
+        if (typeof window.jspdf === 'undefined') {
+            alert('PDF biblioteka dar neužkrauta. Bandykite dar kartą po kelių sekundžių.');
+            return;
+        }
+
         const { jsPDF } = window.jspdf;
         const pdfContent = document.getElementById('pdf-content');
         
@@ -124,8 +144,9 @@ Sutartis sudaryta [currentDate].
         generatePdfBtn.textContent = 'Generuojama... / Generating...';
 
         html2canvas(pdfContent, {
-            scale: 2, 
-            useCORS: true
+            scale: 2,
+            useCORS: true,
+            logging: true // Enable logging for debugging
         }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({
@@ -136,9 +157,7 @@ Sutartis sudaryta [currentDate].
 
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            const canvasWidth = canvas.width;
-            const canvasHeight = canvas.height;
-            const ratio = canvasWidth / canvasHeight;
+            const ratio = canvas.width / canvas.height;
             const imgHeight = pdfWidth / ratio;
             
             let heightLeft = imgHeight;
@@ -148,7 +167,7 @@ Sutartis sudaryta [currentDate].
             heightLeft -= pdfHeight;
 
             while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
+                position -= pdfHeight;
                 pdf.addPage();
                 pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
                 heightLeft -= pdfHeight;
@@ -159,12 +178,14 @@ Sutartis sudaryta [currentDate].
             generatePdfBtn.disabled = false;
             generatePdfBtn.textContent = originalButtonText;
         }).catch(err => {
-            console.error("Error generating PDF:", err);
+            console.error("Klaida generuojant PDF:", err);
+            alert("Atsiprašome, įvyko klaida generuojant PDF failą.");
             generatePdfBtn.disabled = false;
             generatePdfBtn.textContent = originalButtonText;
         });
     });
 
     form.addEventListener('input', updatePreview);
+    // Initial call to populate the fields
     updatePreview();
 });
