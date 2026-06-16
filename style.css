@@ -1,0 +1,190 @@
+:root {
+    --primary-color: #005aa3;
+    --secondary-color: #f0f8ff;
+    --text-color: #333;
+    --border-color: #ddd;
+    --header-bg: #fff;
+    --body-bg: #f9f9f9;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    background-color: var(--header-bg);
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin: 0;
+}
+
+header p {
+    margin: 0;
+    font-style: italic;
+    color: #666;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+header nav a {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.lang-switch {
+    margin-left: auto;
+}
+
+.lang-switch button {
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.lang-switch button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+main {
+    padding: 2rem 0;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 2rem;
+}
+
+.form-section, .preview-section {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+h2 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+h2 + p {
+    font-style: italic;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+form fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+}
+
+form legend {
+    font-weight: bold;
+    color: var(--primary-color);
+    padding: 0 10px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+form input[type="text"], form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#datasets-selection .dataset-item {
+    margin-bottom: 10px;
+}
+
+button#generate-pdf {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+button#generate-pdf:hover {
+    background-color: #004b8d;
+}
+
+.small-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.agreement-text {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    height: 60vh;
+    overflow-y: auto;
+    background-color: #fdfdfd;
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+#json-preview-container {
+    margin-top: 20px;
+}
+
+#json-preview {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    height: 300px;
+    overflow-y: auto;
+}
+
+footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+    background-color: #e9ecef;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
