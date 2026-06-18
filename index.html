@@ -15,238 +15,79 @@
         </div>
     </header>
 
-    <!-- LEGAL DESIGN: Ciklo stadijų progresas (Stepper) -->
-    <section class="stepper-section">
-        <div class="container">
-            <div class="stepper" id="lifecycle-stepper">
-                <div class="step active" data-step="1">
-                    <div class="step-num">1</div>
-                    <div class="step-title">Rengimas<br><span>[EN] Drafting</span></div>
-                </div>
-                <div class="step" data-step="2">
-                    <div class="step-num">2</div>
-                    <div class="step-title">Konsultavimas<br><span>[EN] Scope Consultation</span></div>
-                </div>
-                <div class="step" data-step="3">
-                    <div class="step-num">3</div>
-                    <div class="step-title">Derinimas<br><span>[EN] Terms Negotiation</span></div>
-                </div>
-                <div class="step" data-step="4">
-                    <div class="step-num">4</div>
-                    <div class="step-title">Parengta<br><span>[EN] Final Draft</span></div>
-                </div>
-                <div class="step" data-step="5">
-                    <div class="step-num">5</div>
-                    <div class="step-title">Pasirašymas<br><span>[EN] External Signing</span></div>
-                </div>
-                <div class="step" data-step="6">
-                    <div class="step-num">6</div>
-                    <div class="step-title">Pasirašyta<br><span>[EN] Signed & Uploaded</span></div>
-                </div>
-                <div class="step" data-step="7">
-                    <div class="step-num">7</div>
-                    <div class="step-title">Įgyvendinama<br><span>[EN] Active Flow</span></div>
-                </div>
-                <div class="step" data-step="8">
-                    <div class="step-num">8</div>
-                    <div class="step-title">Atšaukta<br><span>[EN] Terminated</span></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <main class="container">
         <div class="grid-container">
-            
-            <!-- KAIRĖ PUSĖ: Dinaminė interaktyvi aplinka pagal žingsnį -->
+            <!-- Formos skiltis kairėje -->
             <div class="form-section">
-                
-                <!-- STADIJA 1: Rengimas -->
-                <div id="view-step-1" class="step-view active">
-                    <h2>1. Naujos sutarties rengimas</h2>
-                    <p>[EN] New Agreement Drafting</p>
-                    <form id="agreement-form">
-                        <fieldset>
-                            <legend>I. Sutarties Objektas / [EN] Subject</legend>
-                            <label for="dataset-search">Ieškoti duomenų rinkinio / [EN] Search for dataset:</label>
-                            <input type="search" id="dataset-search" placeholder="Įveskite rinkinio pavadinimą...">
-                            <div id="datasets-selection" class="datasets-list"></div>
-                        </fieldset>
+                <h2>Naujos sutarties sudarymas</h2>
+                <p>[EN] New Agreement Creation</p>
+                <form id="agreement-form">
+                    
+                    <!-- 1. Sutarties Objektas -->
+                    <fieldset>
+                        <legend>I. Sutarties Objektas / [EN] Subject</legend>
+                        <label for="dataset-search">Ieškoti duomenų rinkinio / [EN] Search for dataset:</label>
+                        <input type="search" id="dataset-search" placeholder="Įveskite rinkinio pavadinimą...">
+                        <p class="small-text">Demonstraciniais tikslais rodomi VĮ "Registrų centras" duomenų rinkiniai.</p>
+                        <div id="datasets-selection">
+                            <!-- Duomenų rinkiniai bus įkelti čia su JavaScript -->
+                        </div>
+                    </fieldset>
 
-                        <fieldset>
-                            <legend>II. Sutarties Šalys / [EN] Parties</legend>
-                            <h3>Duomenų teikėjas / [EN] Data Provider (Auto)</h3>
-                            <input type="text" id="assignerName" readonly placeholder="Savininkas bus užpildytas pasirinkus rinkinį">
-                            <input type="text" id="assignerCode" readonly placeholder="Savininko kodas">
+                    <!-- 2. Sutarties Šalys (Automatinis pildymas) -->
+                    <fieldset>
+                        <legend>II. Sutarties Šalys / [EN] Parties</legend>
+                        <h3>Duomenų teikėjas / [EN] Data Provider (Auto)</h3>
+                        <label for="assignerName">Pavadinimas / [EN] Name:</label>
+                        <input type="text" id="assignerName" name="assignerName" readonly placeholder="Savininkas užsipildys pasirinkus rinkinį">
+                        <label for="assignerCode">Kodas / [EN] Code:</label>
+                        <input type="text" id="assignerCode" name="assignerCode" readonly placeholder="Savininko kodas">
 
-                            <h3>Duomenų gavėjas / [EN] Data Recipient (Auto)</h3>
-                            <input type="text" id="assigneeName" readonly>
-                            <input type="text" id="assigneeCode" readonly>
-                            <input type="text" id="assigneeRep" readonly>
-                        </fieldset>
+                        <h3>Duomenų gavėjas / [EN] Data Recipient (Prisijungęs vartotojas)</h3>
+                        <label for="assigneeName">Pavadinimas / [EN] Name:</label>
+                        <input type="text" id="assigneeName" name="assigneeName" readonly>
+                        <label for="assigneeCode">Kodas / [EN] Code:</label>
+                        <input type="text" id="assigneeCode" name="assigneeCode" readonly>
+                        <label for="assigneeRep">Atstovas / [EN] Representative:</label>
+                        <input type="text" id="assigneeRep" name="assigneeRep" readonly>
+                    </fieldset>
+                    
+                    <!-- 3. Teisinis Pagrindas ir Tikslas -->
+                    <fieldset>
+                        <legend>III. Teisinis Pagrindas ir Tikslas</legend>
                         
-                        <fieldset>
-                            <legend>III. Teisinis Pagrindas ir Tikslas / [EN] Legal Basis & Purpose</legend>
-                            <label for="legalBasis">Duomenų teikimo teisinis pagrindas / [EN] Legal Basis for Data Provision:</label>
-                            <input type="text" id="legalBasis" value="Elektroninio archyvo informacinės sistemos nuostatų 23.2 p.">
-                            
-                            <label for="dataPurpose">Duomenų tvarkymo tikslas / [EN] Data Processing Purpose:</label>
-                            <textarea id="dataPurpose" rows="4">EAIS tikslas – skaitmenizuoti Nacionalinio dokumentų fondo (toliau – NDF) dokumentų apskaitos dokumentų derinimo, nuolat saugomų dokumentų, ISR duomenų perdavimo valstybės archyvams, aprašymo, saugojimo, valstybės archyvų saugomo skaitmeninio turinio pateikimo naudotojams procesus.</textarea>
-                            
-                            <label for="paymentTerms">Mokėjimo sąlygos / [EN] Payment Terms:</label>
-                            <select id="paymentTerms">
-                                <option value="Neatlygintina">Neatlygintina / [EN] Free of charge</option>
-                                <option value="Avansinis mokėjimas">Avansinis mokėjimas / [EN] Advance payment</option>
-                            </select>
-                        </fieldset>
-                        <button type="button" class="btn-next-step">Pereiti į Konsultavimą ›</button>
-                    </form>
-                </div>
+                        <label for="legalBasis">Duomenų teikimo teisinis pagrindas / [EN] Legal Basis for Data Provision:</label>
+                        <input type="text" id="legalBasis" name="legalBasis" value="Elektroninio archyvo informacinės sistemos nuostatų 23.2 p.">
+                        
+                        <label for="dataPurpose">Duomenų tvarkymo tikslas / [EN] Data Processing Purpose:</label>
+                        <textarea id="dataPurpose" name="dataPurpose" rows="5" style="width: 100%; padding: 10px; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; font-size: 0.9rem;">EAIS tikslas – skaitmenizuoti Nacionalinio dokumentų fondo (toliau – NDF) dokumentų apskaitos dokumentų derinimo, nuolat saugomų dokumentų, ISR duomenų perdavimo valstybės archyvams, aprašymo, saugojimo, valstybės archyvų saugomo skaitmeninio turinio pateikimo naudotojams procesus.</textarea>
+                        
+                        <label for="paymentTerms">Mokėjimo sąlygos / [EN] Payment Terms:</label>
+                        <select id="paymentTerms" name="paymentTerms">
+                            <option value="Neatlygintina">Neatlygintina / [EN] Free of charge</option>
+                            <option value="Avansinis mokėjimas">Avansinis mokėjimas / [EN] Advance payment</option>
+                        </select>
+                    </fieldset>
 
-                <!-- STADIJA 2: Konsultavimasis -->
-                <div id="view-step-2" class="step-view">
-                    <h2>2. Konsultavimasis dėl duomenų imties</h2>
-                    <p>[EN] Data Scope Consultation</p>
-                    <p class="helper-text">Jei reikia papildomų teisių ar patikslinimų dėl UAPI apimties, šalys gali tiesiogiai konsultuotis čia.</p>
-                    
-                    <div class="chat-box" id="chat-box">
-                        <div class="chat-message receiver">
-                            <strong>Martynas Mockus (VSSA):</strong> Ar jūsų teikiamame rinkinyje <code>uapi:/jar/imones/:getall</code> apima ir istorinius duomenis?
-                        </div>
-                        <div class="chat-message provider">
-                            <strong>Teikėjas (Registrų centras):</strong> Taip, šis scope apima istorinius duomenis nuo 2018 metų. Jei reikia senesnių, pateikite atskirą prašymą.
-                        </div>
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-input" placeholder="Parašykite žinutę šalims...">
-                        <button type="button" id="btn-send-chat">Siųsti</button>
-                    </div>
-                    <button type="button" class="btn-next-step">Sutarti dėl imties ir derinti sąlygas ›</button>
-                </div>
-
-                <!-- STADIJA 3: Sąlygų derinimas -->
-                <div id="view-step-3" class="step-view">
-                    <h2>3. Sąlygų derinimas</h2>
-                    <p>[EN] Terms Negotiation</p>
-                    <p class="helper-text">Šalys derina atsiskaitymo tvarką bei kitus teisinius pagrindus. Galima siūlyti alternatyvą arba patvirtinti esamą variantą.</p>
-                    
-                    <div class="negotiation-card">
-                        <h4>Mokėjimo sąlygos / [EN] Payment Terms</h4>
-                        <div class="negotiation-status pending">Laukia patvirtinimo / [EN] Awaiting Approval</div>
-                        <p>Dabartinis siūlymas: <strong>Neatlygintina / Free of charge</strong></p>
-                        <div class="negotiation-actions">
-                            <button type="button" class="btn-action-approve">Patvirtinti sąlygą</button>
-                            <button type="button" class="btn-action-counter">Siūlyti atlygintiną</button>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-next-step">Užbaigti derinimą ›</button>
-                </div>
-
-                <!-- STADIJA 4: Sutartis parengta -->
-                <div id="view-step-4" class="step-view">
-                    <h2>4. Sutartis parengta</h2>
-                    <p>[EN] Agreement Prepared & Validated</p>
-                    <p class="helper-text">Sutarties šalys, apimtys ir ODRL JSON validacija atlikta sėkmingai. Sutartis paruošta pasirašymui.</p>
-                    
-                    <div class="checklist-card">
-                        <div class="check-item verified">✓ Šalys sėkmingai identifikuotos</div>
-                        <div class="check-item verified">✓ UAPI metodika ir scopes patvirtintos</div>
-                        <div class="check-item verified">✓ ODRL JSON priedo schema yra teisinga</div>
-                    </div>
-                    
-                    <button type="button" class="btn-next-step highlight">Sugeneruoti sutartį pasirašymui ›</button>
-                </div>
-
-                <!-- STADIJA 5: Laukia pasirašymo -->
-                <div id="view-step-5" class="step-view">
-                    <h2>5. Laukia pasirašymo</h2>
-                    <p>[EN] Awaiting Signature</p>
-                    <p class="helper-text">Sutartis sugeneruota PDF formatu su integruotu JSON priedu. Atsisiųskite ją išoriniam pasirašymui kvalifikuotu el. parašu ir įkelkite pasirašytą ADOC failą.</p>
-                    
-                    <div class="action-box">
-                        <button type="button" id="generate-pdf" class="btn-download">Atsisiųsti PDF pasirašymui (PDF)</button>
-                    </div>
-
-                    <div class="upload-zone" id="adoc-upload-zone">
-                        <p>Įkelkite pasirašytą ADOC failą čia / [EN] Upload signed ADOC file here</p>
-                        <input type="file" id="adoc-file" accept=".adoc" style="display: none;">
-                        <button type="button" onclick="document.getElementById('adoc-file').click()">Naršyti failus</button>
-                        <p class="upload-status" id="upload-status">Laukia failo...</p>
-                    </div>
-                </div>
-
-                <!-- STADIJA 6: Sutartis pasirašyta -->
-                <div id="view-step-6" class="step-view">
-                    <h2>6. Sutartis pasirašyta</h2>
-                    <p>[EN] Agreement Signed Successfully</p>
-                    <div class="success-banner">
-                        <h3>Sutartis pasirašyta abiejų šalių!</h3>
-                        <p>Įkeltas ADOC failas sėkmingai patikrintas ir užregistruotas.</p>
-                    </div>
-                    <div class="signature-details">
-                        <p><strong>Parašas 1:</strong> Valstybės įmonė Registrų centras (Sertifikatas galiojantis)</p>
-                        <p><strong>Parašas 2:</strong> Martynas Mockus, VSSA (Sertifikatas galiojantis)</p>
-                    </div>
-                    <button type="button" id="btn-activate-contract" class="btn-next-step highlight">Aktyvuoti duomenų teikimą (UAPI) ›</button>
-                </div>
-
-                <!-- STADIJA 7: Sutartis įgyvendinama -->
-                <div id="view-step-7" class="step-view">
-                    <h2>7. Sutartis įgyvendinama</h2>
-                    <p>[EN] Contract Implemented & Active</p>
-                    <p class="helper-text">Duomenų mainai yra aktyvūs. Žemiau pateikiami OAUTH 2.0 prisijungimo duomenys ir UDTS testavimo konsolė.</p>
-                    
-                    <div class="api-credentials-card">
-                        <h3>OAUTH 2.0 Credentials</h3>
-                        <p><strong>Client ID:</strong> <code>vssa_client_98234a78c</code></p>
-                        <p><strong>Client Secret:</strong> <span class="masked-secret">••••••••••••••••••••</span></p>
-                    </div>
-
-                    <div class="api-console">
-                        <h3>UDTS Testavimo terminalas</h3>
-                        <button type="button" id="btn-test-api">Išbandyti UDTS užklausą (GET)</button>
-                        <pre id="api-response-output">Spustelkite mygtuką testavimui...</pre>
-                    </div>
-                    <button type="button" class="btn-terminate-contract">Nutraukti/Atšaukti sutartį</button>
-                </div>
-
-                <!-- STADIJA 8: Sutartis atšaukta -->
-                <div id="view-step-8" class="step-view">
-                    <h2>8. Sutartis atšaukta / archyvas</h2>
-                    <p>[EN] Agreement Terminated & Archived</p>
-                    <div class="error-banner">
-                        <h3>Sutartis yra NUTRAUKTA</h3>
-                        <p>Duomenų teikimas pagal šią sutartį yra pilnai sustabdytas.</p>
-                    </div>
-                    <div class="archive-info">
-                        <p><strong>Nutraukimo data:</strong> 2026-06-16 (Šiandien)</p>
-                        <p><strong>Priežastis:</strong> Pasibaigęs sutarties galiojimo terminas arba šalių susitarimu.</p>
-                    </div>
-                    <button type="button" id="btn-restart-demo">Sukurti naują sutartį iš naujo</button>
-                </div>
-
+                    <button type="button" id="generate-pdf" style="width: 100%;">Generuoti PDF / [EN] Generate PDF</button>
+                    <p class="small-text" style="text-align: center; margin-top: 10px;">Sugeneruotas PDF bus paruoštas išoriniam pasirašymui ADOC formatu.</p>
+                </form>
             </div>
 
-            <!-- DEŠINĖ PUSĖ: Gyva sutarties peržiūra ir JSON priedas -->
+            <!-- Peržiūros skiltis dešinėje -->
             <div id="pdf-content" class="preview-section">
-                <div class="paper-contract">
-                    <div class="watermark-stamp" id="contract-watermark">JUODRAŠTIS</div>
-                    <h2>Sutarties peržiūra</h2>
-                    <p>[EN] Agreement Preview</p>
-                    <hr>
-                    <div id="agreement-preview" class="agreement-text">
-                        <!-- Preview dynamic content -->
-                    </div>
+                <h2>Sutarties peržiūra</h2>
+                <p>[EN] Agreement Preview</p>
+                <div id="agreement-preview" class="agreement-text">
+                    <!-- Dinaminis sutarties tekstas -->
                 </div>
-                
                 <div id="json-preview-container">
-                    <h3>ODRL JSON-LD Priedas / [EN] JSON Annex</h3>
+                    <h3>JSON Priedas / [EN] JSON Annex</h3>
                     <pre id="json-preview">
-                        <!-- JSON schema -->
+                        <!-- ODRL JSON priedas -->
                     </pre>
                 </div>
             </div>
-
         </div>
     </main>
 
