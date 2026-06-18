@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teikėjo aplinka - Išmaniosios sutartys</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Išmaniųjų duomenų sutarčių modulis</h1>
+            <p>Duomenų teikėjo aplinka / [EN] Data Provider Environment</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="index.html">Gavėjo aplinka</a>
+            <a href="provider.html" class="active">Teikėjo aplinka</a>
+            <a href="vssa.html">VSSA administratoriaus aplinka</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Gautos sutartys derinimui</h2>
+        <p class="helper-text">Čia matote visas duomenų gavėjų pateiktas sutartis, kurios laukia jūsų peržiūros ir patvirtinimo.</p>
+        <div id="contracts-list" class="contracts-list-container">
+            <p>Sutarčių nerasta. Sukurkite naują sutartį "Gavėjo aplinkoje".</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contractsList = document.getElementById('contracts-list');
+            const agreements = JSON.parse(localStorage.getItem('agreements')) || [];
+
+            if (agreements.length > 0) {
+                contractsList.innerHTML = '';
+                agreements.forEach(agreement => {
+                    const card = document.createElement('div');
+                    card.className = 'contract-card';
+                    card.innerHTML = `
+                        <h3>Sutartis su: ${agreement.assignee[0]['ex:companyName']}</h3>
+                        <p><strong>Sutarties ID:</strong> ${agreement.uid.split('/').pop().substring(0, 8)}...</p>
+                        <p><strong>Būsena:</strong> <span class="status-pending">Laukia peržiūros</span></p>
+                        <p><strong>Prašomi duomenys:</strong> ${agreement.permission.map(p => p.target['ex:name']).join(', ')}</p>
+                    `;
+                    contractsList.appendChild(card);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
