@@ -1,125 +1,143 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- DEMO DUOMENYS ---
     const demoDatasets = [
         { id: 3987, name: "Juridinių asmenų registro duomenys", owner: "Valstybės įmonė Registrų centras" },
         { id: 4071, name: "Adresų registro duomenys", owner: "Valstybės įmonė Registrų centras" }
     ];
 
+    // --- ELEMENTAI ---
     const searchInput = document.getElementById('consult-dataset-search');
     const selectionContainer = document.getElementById('consult-datasets-selection');
     const selectedContainer = document.getElementById('consult-selected-datasets');
     const submitBtn = document.getElementById('submit-consultation');
-    const activeConsultationsList = document.getElementById('active-consultations-list');
+    const activeList = document.getElementById('active-consultations-list');
+    const modal = document.getElementById('chat-modal');
+    const modalTitle = document.getElementById('chat-modal-title');
+    const chatHistory = document.getElementById('chat-history');
+    const messageInput = document.getElementById('chat-message-input');
+    const sendBtn = document.getElementById('send-chat-message');
+    const finishBtn = document.getElementById('finish-consultation-btn');
+    const closeBtn = document.getElementById('close-modal-btn');
+    
     let selectedDatasets = [];
+    let currentConsultationId = null;
+    let allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
 
-    // Duomenų rinkinių paieška ir atvaizdavimas
+    // --- NAUJOS KONSULTACIJOS KŪRIMAS ---
     const renderSearchResults = (datasets) => {
         selectionContainer.innerHTML = '';
         datasets.forEach(ds => {
             const div = document.createElement('div');
             div.className = 'search-result-item';
             div.textContent = ds.name;
-            div.onclick = () => addDatasetToSelection(ds);
+            div.onclick = () => {
+                if (!selectedDatasets.some(sds => sds.id === ds.id)) selectedDatasets.push(ds);
+                renderSelectedDatasets();
+                searchInput.value = '';
+                selectionContainer.innerHTML = '';
+            };
             selectionContainer.appendChild(div);
         });
     };
-
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        if (query.length > 2) {
-            const results = demoDatasets.filter(ds => ds.name.toLowerCase().includes(query));
-            renderSearchResults(results);
-        } else {
-            selectionContainer.innerHTML = '';
-        }
+        const q = e.target.value.toLowerCase();
+        renderSearchResults(q.length > 2 ? demoDatasets.filter(ds => ds.name.toLowerCase().includes(q)) : []);
     });
-
-    // Pasirinktų rinkinių atvaizdavimas
     const renderSelectedDatasets = () => {
         selectedContainer.innerHTML = '<h4>Pridėti rinkiniai:</h4>';
-        if (selectedDatasets.length === 0) {
-            selectedContainer.innerHTML += '<p>Kol kas nepridėta.</p>';
-        } else {
-            selectedDatasets.forEach((ds, index) => {
-                const item = document.createElement('div');
-                item.className = 'selected-item';
-                item.textContent = ds.name;
-                const removeBtn = document.createElement('span');
-                removeBtn.textContent = ' (pašalinti)';
-                removeBtn.style.cursor = 'pointer';
-                removeBtn.style.color = 'red';
-                removeBtn.onclick = () => removeDatasetFromSelection(index);
-                item.appendChild(removeBtn);
-                selectedContainer.appendChild(item);
-            });
-        }
+        if (!selectedDatasets.length) selectedContainer.innerHTML += '<p>Kol kas nepridėta.</p>';
+        selectedDatasets.forEach((ds, i) => {
+            const item = document.createElement('div');
+            item.className = 'selected-item';
+            item.innerHTML = `${ds.name} <span class="remove-btn" data-index="${i}">(pašalinti)</span>`;
+            selectedContainer.appendChild(item);
+        });
     };
-
-    const addDatasetToSelection = (dataset) => {
-        if (!selectedDatasets.some(ds => ds.id === dataset.id)) {
-            selectedDatasets.push(dataset);
+    selectedContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-btn')) {
+            selectedDatasets.splice(e.target.dataset.index, 1);
             renderSelectedDatasets();
-            searchInput.value = '';
-            selectionContainer.innerHTML = '';
         }
-    };
-    
-    const removeDatasetFromSelection = (index) => {
-        selectedDatasets.splice(index, 1);
-        renderSelectedDatasets();
-    };
+    });
+    submitBtn.addEventListener('click', () => {
+        const purpose = document.getElementById('consult-dataPurpose').value.trim();
+        if (!purpose) { alert('Prašome nurodyti duomenų tvarkymo tikslą.'); return; }
+        const newConsultation = {
+            id: Date.now(), purpose: purpose,
+            legalBasis: document.getElementById('consult-legalBasis').value,
+            status: 'Pateikta, laukia teikėjo atsakymo',
+            messages: [{ sender: 'recipient', text: purpose }, { sender: 'recipient', text: `Siūlomi rinkiniai: ${selectedDatasets.map(d=>d.name).join(', ') || 'Nenurodyta'}` }]
+        };
+        allConsultations.push(newConsultation);
+        localStorage.setItem('consultations', JSON.stringify(allConsultations));
+        alert('Konsultacija sėkmingai pateikta!');
+        location.reload();
+    });
 
-    // Aktyvių konsultacijų atvaizdavimas
+    // --- ESAMŲ KONSULTACIJŲ VALDYMAS ---
+    const openChatModal = (consultationId) => {
+        currentConsultationId = consultationId;
+        const consult = allConsultations.find(c => c.id === consultationId);
+        if (!consult) return;
+
+        modalTitle.textContent = `Konsultacija dėl: "${consult.purpose.substring(0, 40)}..."`;
+        chatHistory.innerHTML = '';
+        consult.messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${msg.sender}`;
+            msgDiv.innerHTML = `<strong>${msg.sender === 'recipient' ? 'Jūs' : 'Teikėjas'}:</strong><p>${msg.text}</p>`;
+            chatHistory.appendChild(msgDiv);
+        });
+
+        modal.style.display = 'flex';
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
     const renderActiveConsultations = () => {
-        const consultations = JSON.parse(localStorage.getItem('consultations')) || [];
-        activeConsultationsList.innerHTML = '';
-        if (consultations.length === 0) {
-            activeConsultationsList.innerHTML = '<p>Aktyvių konsultacijų nerasta.</p>';
-            return;
-        }
-        consultations.forEach(consult => {
+        const activeConsults = allConsultations.filter(c => !c.status.includes('Užbaigta'));
+        activeList.innerHTML = activeConsults.length ? '' : '<p>Aktyvių konsultacijų nerasta.</p>';
+        activeConsults.forEach(consult => {
             const card = document.createElement('div');
             card.className = 'contract-card';
             card.innerHTML = `
-                <h3>Konsultacija dėl: ${consult.purpose}</h3>
+                <h3>Užklausa dėl: "${consult.purpose.substring(0, 50)}..."</h3>
                 <p><strong>Būsena:</strong> <span class="status-pending">${consult.status}</span></p>
-                <p><strong>Pateikta:</strong> ${new Date(consult.id).toLocaleDateString('lt-LT')}</p>
-                ${consult.response ? `<div class="provider-response"><strong>Teikėjo atsakymas:</strong> ${consult.response}</div>` : ''}
+                <button class="btn-secondary" onclick="window.openChatModal(${consult.id})">Tęsti dialogą</button>
             `;
-            activeConsultationsList.appendChild(card);
+            activeList.appendChild(card);
         });
     };
 
-    // Konsultacijos pateikimas
-    submitBtn.addEventListener('click', () => {
-        const purpose = document.getElementById('consult-dataPurpose').value;
-        const legalBasis = document.getElementById('consult-legalBasis').value;
-
-        if (!purpose) {
-            alert('Prašome nurodyti duomenų tvarkymo tikslą.');
-            return;
+    sendBtn.addEventListener('click', () => {
+        const text = messageInput.value.trim();
+        if (!text || !currentConsultationId) return;
+        
+        const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
+        if (consultIndex > -1) {
+            allConsultations[consultIndex].messages.push({ sender: 'recipient', text: text });
+            allConsultations[consultIndex].status = 'Pateiktas klausimas, laukia teikėjo atsakymo';
+            localStorage.setItem('consultations', JSON.stringify(allConsultations));
+            messageInput.value = '';
+            openChatModal(currentConsultationId); // Refresh modal
+            renderActiveConsultations(); // Refresh main list
         }
-
-        const newConsultation = {
-            id: Date.now(),
-            purpose: purpose,
-            legalBasis: legalBasis,
-            requestedDatasets: selectedDatasets,
-            status: 'Pateikta, laukia teikėjo atsakymo',
-            response: null
-        };
-
-        const existingConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
-        existingConsultations.push(newConsultation);
-        localStorage.setItem('consultations', JSON.stringify(existingConsultations));
-
-        alert('Konsultacija sėkmingai pateikta!');
-        renderActiveConsultations();
-        document.getElementById('consultation-form').reset();
-        selectedDatasets = [];
-        renderSelectedDatasets();
     });
 
-    // Pradinis puslapio užkrovimas
+    finishBtn.addEventListener('click', () => {
+        if (!currentConsultationId || !confirm('Ar tikrai norite užbaigti šią konsultaciją?')) return;
+        const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
+        if (consultIndex > -1) {
+            allConsultations[consultIndex].status = 'Užbaigta gavėjo';
+            localStorage.setItem('consultations', JSON.stringify(allConsultations));
+            modal.style.display = 'none';
+            renderActiveConsultations();
+        }
+    });
+
+    closeBtn.addEventListener('click', () => modal.style.display = 'none');
+    window.onclick = (event) => { if (event.target === modal) modal.style.display = 'none'; };
+
+    // --- PRADINIS PUSLAPIO UŽKROVIMAS ---
+    window.openChatModal = openChatModal;
     renderSelectedDatasets();
     renderActiveConsultations();
 });
