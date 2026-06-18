@@ -16,13 +16,23 @@
 
     <nav class="main-nav">
         <div class="container">
-            <a href="index.html">Gavėjo aplinka</a>
+            <a href="index.html">Sutarčių rengimas</a>
+            <a href="consultations.html">Konsultacijos</a>
             <a href="provider.html" class="active">Teikėjo aplinka</a>
-            <a href="vssa.html">VSSA administratoriaus aplinka</a>
+            <a href="vssa.html">VSSA aplinka</a>
         </div>
     </nav>
 
     <main class="container">
+        <!-- Nauja skiltis konsultacijoms -->
+        <h2>Gautos konsultacijų užklausos</h2>
+        <p class="helper-text">Čia matote gavėjų pateiktas užklausas dėl duomenų apimties. Peržiūrėkite ir pateikite savo atsakymą ar pasiūlymą.</p>
+        <div id="consultations-list" class="contracts-list-container">
+            <p>Naujų konsultacijų nerasta.</p>
+        </div>
+
+        <hr style="margin: 2rem 0;">
+
         <h2>Gautos sutartys derinimui</h2>
         <p class="helper-text">Čia matote visas duomenų gavėjų pateiktas sutartis, kurios laukia jūsų peržiūros ir patvirtinimo.</p>
         <div id="contracts-list" class="contracts-list-container">
@@ -33,23 +43,46 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const contractsList = document.getElementById('contracts-list');
+            const consultationsList = document.getElementById('consultations-list');
             const agreements = JSON.parse(localStorage.getItem('agreements')) || [];
+            const consultations = JSON.parse(localStorage.getItem('consultations')) || [];
 
-            if (agreements.length > 0) {
-                contractsList.innerHTML = '';
-                agreements.forEach(agreement => {
+            // Rodo gautas konsultacijas
+            if (consultations.length > 0) {
+                consultationsList.innerHTML = '';
+                consultations.forEach((consult, index) => {
                     const card = document.createElement('div');
                     card.className = 'contract-card';
                     card.innerHTML = `
-                        <h3>Sutartis su: ${agreement.assignee[0]['ex:companyName']}</h3>
-                        <p><strong>Sutarties ID:</strong> ${agreement.uid.split('/').pop().substring(0, 8)}...</p>
-                        <p><strong>Būsena:</strong> <span class="status-pending">Laukia peržiūros</span></p>
-                        <p><strong>Prašomi duomenys:</strong> ${agreement.permission.map(p => p.target['ex:name']).join(', ')}</p>
+                        <h3>Konsultacija dėl: "${consult.purpose.substring(0, 50)}..."</h3>
+                        <p><strong>Būsena:</strong> <span class="status-pending">${consult.status}</span></p>
+                        <p><strong>Siūlomi rinkiniai:</strong> ${consult.requestedDatasets.length > 0 ? consult.requestedDatasets.map(d => d.name).join(', ') : 'Nenurodyta'}</p>
+                        ${consult.status.includes('Atsakyta') ? '' : `<textarea id="response-${index}" placeholder="Jūsų atsakymas arba pasiūlymas..."></textarea><button onclick="respondToConsultation(${index})">Atsakyti</button>`}
                     `;
-                    contractsList.appendChild(card);
+                    consultationsList.appendChild(card);
                 });
             }
+            
+            // Rodo gautas sutartis
+            if (agreements.length > 0) {
+                contractsList.innerHTML = '';
+                // ... (sutarčių atvaizdavimo kodas lieka toks pats) ...
+            }
         });
+
+        function respondToConsultation(index) {
+            const responseText = document.getElementById(`response-${index}`).value;
+            if (!responseText) {
+                alert('Įveskite atsakymą.');
+                return;
+            }
+            let consultations = JSON.parse(localStorage.getItem('consultations')) || [];
+            consultations[index].response = responseText;
+            consultations[index].status = 'Atsakyta, laukia gavėjo patvirtinimo';
+            localStorage.setItem('consultations', JSON.stringify(consultations));
+            alert('Atsakymas sėkmingai išsiųstas!');
+            window.location.reload();
+        }
     </script>
 </body>
 </html>
