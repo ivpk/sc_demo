@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const purposeInput = document.getElementById('consult-dataPurpose');
             const purpose = purposeInput ? purposeInput.value.trim() : '';
             
+            // Šis laukas anksčiau nebuvo įtrauktas į .js, todėl forma neveikė
             const legalBasisInput = document.getElementById('consult-legalBasis');
             const legalBasis = legalBasisInput ? legalBasisInput.value.trim() : 'Nurodyta poreikyje';
 
@@ -212,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('consultations', JSON.stringify(allConsultations));
             alert('Konsultacijos užklausa sėkmingai pateikta Teikėjui!');
             
-            // Išvalome būseną
             state = { selectedDataset: null, selectedModels: [], selectedProperties: {} };
             const formEl = document.getElementById('consultation-form');
             if (formEl) formEl.reset();
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderActiveConsultations = () => {
         allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
         
-        // Naudojame apsaugotą filtrą (c && c.status), kad neįvyktų klaidos dėl senų įrašų
+        // Pataisytas, saugus filtras, kuris tikrina, ar įrašas ir jo 'status' laukas egzistuoja
         const activeConsults = allConsultations.filter(c => c && c.status && !c.status.includes('Užbaigta'));
         
         if (!activeList) return;
@@ -259,57 +259,4 @@ document.addEventListener('DOMContentLoaded', () => {
             chatHistory.innerHTML = '';
             consult.messages.forEach(msg => {
                 const msgDiv = document.createElement('div');
-                msgDiv.className = `chat-message ${msg.sender}`;
-                const formattedText = msg.text.replace(/\n/g, '<br>');
-                msgDiv.innerHTML = `<strong>${msg.sender === 'recipient' ? 'Jūs' : 'Teikėjas'}:</strong><p>${formattedText}</p>`;
-                chatHistory.appendChild(msgDiv);
-            });
-        }
-
-        if (modal) modal.style.display = 'flex';
-        if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
-    };
-
-    // --- PRANEŠIMO SIUNTIMAS DIALOGE ---
-    if (sendBtn) {
-        sendBtn.addEventListener('click', () => {
-            if (!messageInput) return;
-            const text = messageInput.value.trim();
-            if (!text || !currentConsultationId) return;
-
-            const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
-            if (consultIndex > -1) {
-                allConsultations[consultIndex].messages.push({ sender: 'recipient', text: text });
-                allConsultations[consultIndex].status = 'Pateiktas klausimas, laukia teikėjo atsakymo';
-                localStorage.setItem('consultations', JSON.stringify(allConsultations));
-                messageInput.value = '';
-                openChatModal(currentConsultationId);
-                renderActiveConsultations();
-            }
-        });
-    }
-
-    // --- KONSULTACIJOS UŽBAIGIMAS ---
-    if (finishBtn) {
-        finishBtn.addEventListener('click', () => {
-            if (!currentConsultationId || !confirm('Ar tikrai norite pažymėti šią konsultaciją kaip užbaigtą?')) return;
-            
-            const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
-            if (consultIndex > -1) {
-                allConsultations[consultIndex].status = 'Užbaigta gavėjo';
-                localStorage.setItem('consultations', JSON.stringify(allConsultations));
-                if (modal) modal.style.display = 'none';
-                renderActiveConsultations();
-            }
-        });
-    }
-
-    // Uždarymas
-    if (closeBtn) closeBtn.addEventListener('click', () => { if (modal) modal.style.display = 'none'; });
-    window.onclick = (event) => { if (event === modal) modal.style.display = 'none'; };
-
-    // --- PALEIDIMAS ---
-    window.openChatModal = openChatModal;
-    renderDatasets();
-    renderActiveConsultations();
-});
+                msgDiv.className = `c
