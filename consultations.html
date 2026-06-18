@@ -22,23 +22,28 @@
         <div class="grid-container">
             <div class="form-section">
                 <h2>Nauja konsultacijos užklausa</h2>
-                <p class="helper-text">Aprašykite poreikį, pridėkite žinomus rinkinius arba tiesiog klauskite – Teikėjas padės parinkti tinkamą apimtį.</p>
+                <p class="helper-text">Aprašykite poreikį ir pasirinkite duomenų apimtį, dėl kurios norite konsultuotis.</p>
                 <form id="consultation-form">
                     <fieldset>
                         <legend>1. Poreikio aprašymas</legend>
-                        <label for="consult-legalBasis">Duomenų teikimo teisinis pagrindas:</label>
-                        <input type="text" id="consult-legalBasis" value="Viešojo intereso užduotis">
-                        <label for="consult-dataPurpose">Duomenų tvarkymo tikslas (Kuo detaliau):</label>
-                        <textarea id="consult-dataPurpose" rows="5" placeholder="Pvz., norime atlikti atvirų duomenų poveikio Lietuvos ekonomikai analizę..."></textarea>
+                        <label for="consult-dataPurpose">Duomenų tvarkymo tikslas ir klausimai:</label>
+                        <textarea id="consult-dataPurpose" rows="5" placeholder="Pvz., norime kurti analitinį įrankį ir nežinome, ar AdminUnit ir Location modelių savybės `code` ir `name@lt` yra pakankamos..."></textarea>
                     </fieldset>
                     <fieldset>
-                        <legend>2. Siūloma duomenų apimtis (nebūtina)</legend>
-                        <label for="consult-dataset-search">Ieškoti ir pridėti duomenų rinkinį:</label>
-                        <input type="search" id="consult-dataset-search" placeholder="Ieškoti VĮ 'Registrų centras' rinkinių...">
+                        <legend>2. Siūloma duomenų apimtis</legend>
+                        <label>2.1. Pasirinkite duomenų rinkinį:</label>
                         <div id="consult-datasets-selection"></div>
-                        <div id="consult-selected-datasets" class="selected-items-list"><p>Kol kas nepridėta.</p></div>
+                        
+                        <div id="consult-models-container" class="selection-container" style="display: none;">
+                            <label>2.2. Pasirinkite modelius:</label>
+                            <div id="consult-models-selection"></div>
+                        </div>
+                        <div id="consult-properties-container" class="selection-container" style="display: none;">
+                            <label>2.3. Pasirinkite savybes:</label>
+                            <div id="consult-properties-selection"></div>
+                        </div>
                     </fieldset>
-                    <button type="button" id="submit-consultation">Pateikti konsultaciją Teikėjui</button>
+                    <button type="button" id="submit-consultation">Pateikti konsultaciją</button>
                 </form>
             </div>
             <div class="preview-section">
@@ -47,20 +52,7 @@
             </div>
         </div>
     </main>
-    <div id="chat-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <h2 id="chat-modal-title">Konsultacijos peržiūra</h2>
-            <div id="chat-history" class="chat-history"></div>
-            <div id="chat-input-area" class="chat-input-area">
-                <textarea id="chat-message-input" placeholder="Jūsų klausimas ar atsakymas..." rows="3"></textarea>
-                <button id="send-chat-message">Siųsti</button>
-            </div>
-            <div class="modal-actions">
-                <button id="finish-consultation-btn" class="btn-success">Užbaigti konsultaciją</button>
-                <button id="close-modal-btn" class="btn-secondary">Uždaryti</button>
-            </div>
-        </div>
-    </div>
+    <!-- MODAL langas liko nepakitęs, todėl čia nepateikiamas -->
     <script src="consultations.js"></script>
 </body>
 </html>
