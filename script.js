@@ -136,14 +136,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+
+  
     const openAgreementModal = (uid) => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const agreement = allAgreements.find(a => a.uid === uid);
         if (!agreement || !agreementModal) return;
+        // PATAISYMAS: Naudojame ID iš modalinio lango
         document.getElementById('modal-agreement-text').textContent = generateAgreementText(agreement);
         document.getElementById('modal-agreement-json').textContent = JSON.stringify(agreement, null, 2);
         agreementModal.style.display = 'flex';
     };
+
+
 
     // --- ĮVYKIŲ KLAUSYTOJAI ---
     form.addEventListener('change', (e) => {
