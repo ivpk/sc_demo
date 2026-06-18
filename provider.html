@@ -19,14 +19,29 @@
         </div>
     </nav>
     <main class="container">
+        <!-- SKILTIS SUTARTIMS (ATKURTA) -->
+        <h2>Gautos sutartys derinimui</h2>
+        <p class="helper-text">Čia matote visas duomenų gavėjų pateiktas sutartis, kurios laukia jūsų peržiūros ir patvirtinimo.</p>
+        <div id="contracts-list" class="contracts-list-container">
+            <p>Pateiktų sutarčių nerasta.</p>
+        </div>
+        
+        <hr style="margin: 2rem 0;">
+
+        <!-- SKILTIS KONSULTACIJOMS -->
         <h2>Gautos konsultacijų užklausos</h2>
         <p class="helper-text">Čia matote aktyvias gavėjų užklausas. Peržiūrėkite ir tęskite dialogą, kol bus prieitas bendras sutarimas.</p>
         <div id="provider-consultations-list" class="contracts-list-container"><p>Naujų konsultacijų nerasta.</p></div>
+        
         <hr style="margin: 2rem 0;">
+
+        <!-- SKILTIS ARCHYVUI -->
         <h2>Konsultacijų archyvas</h2>
         <p class="helper-text">Užbaigtų konsultacijų sąrašas peržiūrai.</p>
         <ul id="archived-consultations-list" class="archive-list"><li class="archive-placeholder">Archyve įrašų nėra.</li></ul>
     </main>
+
+    <!-- POKALBIŲ LANGAS (MODAL) -->
     <div id="chat-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2 id="chat-modal-title">Konsultacijos peržiūra</h2>
@@ -40,6 +55,7 @@
             </div>
         </div>
     </div>
+    
     <script src="provider.js"></script>
 </body>
 </html>
