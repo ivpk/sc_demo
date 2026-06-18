@@ -305,7 +305,7 @@ button {
 .archive-list li a { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-color); font-weight: 500; font-size: 0.9rem; }
 
 /* ======================================================= */
-/* === SUTARČIŲ PERŽIŪROS MODALO 50/50 SPRENDIMAS (NAUJA) === */
+/* === SUTARČIŲ PERŽIŪROS MODALO 50/50 SPRENDIMAS === */
 /* ======================================================= */
 
 /* Peržiūros išdėstymas, kuris padalina langą per pusę (50/50 girdas) */
@@ -319,17 +319,17 @@ button {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
-    flex-grow: 1;
-    min-height: 380px;
-    max-height: 50vh;
-    overflow: hidden;
+    flex-grow: 1; /* Leidžia išplėsti vertikaliai */
+    min-height: 380px; /* Minimalus aukštis */
+    max-height: 50vh; /* Maksimalus aukštis nuo viewporto */
+    overflow: hidden; /* Paslėpia scrollbarus, jei turinys netelpa */
     margin-bottom: 1rem;
 }
 
 #agreement-view-modal .modal-column {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden; /* Paslėpia perteklių */
 }
 
 #agreement-view-modal .modal-column h3 {
@@ -341,9 +341,9 @@ button {
 
 /* Teksto dėžutė kairėje pusėje */
 #agreement-view-modal .agreement-text {
-    flex-grow: 1;
-    height: 100% !important; /* Naudoja visą stulpelio aukštį */
-    overflow-y: auto;
+    flex-grow: 1; /* Užima visą likusią stulpelio vietą */
+    height: auto; /* Leidžia turiniui nustatyti aukštį, bet flex-grow vis tiek kontroliuos */
+    overflow-y: auto; /* Slinkimo juosta, jei turinys per ilgas */
     border: 1px solid var(--border-color);
     padding: 1rem;
     background: #fdfdfd;
@@ -354,9 +354,9 @@ button {
 
 /* ODRL JSON dėžutė dešinėje pusėje */
 #agreement-view-modal #agreement-view-json {
-    flex-grow: 1;
-    height: 100% !important; /* Naudoja visą stulpelio aukštį */
-    overflow-y: auto;
+    flex-grow: 1; /* Užima visą likusią stulpelio vietą */
+    height: auto; /* Leidžia turiniui nustatyti aukštį, bet flex-grow vis tiek kontroliuos */
+    overflow-y: auto; /* Slinkimo juosta, jei turinys per ilgas */
     border: 1px solid var(--border-color);
     background-color: #263238; 
     color: #eceff1; 
