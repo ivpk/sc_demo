@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById('submit-consultation');
     const activeList = document.getElementById('active-consultations-list');
     
-    // Dialogo (modal) elementai
+    // Dialogo langas
     const modal = document.getElementById('chat-modal');
     const modalTitle = document.getElementById('chat-modal-title');
     const chatHistory = document.getElementById('chat-history');
@@ -61,8 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentConsultationId = null;
     let allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
 
-    // --- PAIEŠKOS / ATVAIZDAVIMO LOGIKA FORMOJE ---
+    // --- SĄRAŠO RENDERINIMAS ---
     const renderDatasets = () => {
+        if (!datasetsContainer) return;
         datasetsContainer.innerHTML = '';
         Object.entries(dataStructure).forEach(([key, ds]) => {
             datasetsContainer.innerHTML += `
@@ -73,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderModels = (datasetKey) => {
+        if (!modelsContainer) return;
         const dataset = dataStructure[datasetKey];
         modelsContainer.innerHTML = '';
         Object.keys(dataset.models).forEach(modelKey => {
@@ -81,19 +83,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label><input type="checkbox" name="consult-model" value="${modelKey}"> ${dataset.models[modelKey].title}</label>
                 </div>`;
         });
-        document.getElementById('consult-models-container').style.display = 'block';
+        const container = document.getElementById('consult-models-container');
+        if (container) container.style.display = 'block';
     };
 
     const renderProperties = () => {
+        if (!propertiesContainer) return;
         propertiesContainer.innerHTML = '';
         const dataset = dataStructure[state.selectedDataset];
+        if (!dataset) return;
+
         state.selectedModels.forEach(modelKey => {
             const model = dataset.models[modelKey];
+            if (!model) return;
+
             let propertiesHTML = `<div class="property-group" style="margin-bottom: 12px; border-left: 3px solid #ccc; padding-left: 10px;"><h4>${model.title} savybės:</h4>`;
             Object.keys(model.properties).forEach(propKey => {
                 propertiesHTML += `
                     <div style="margin-bottom: 4px;">
-                        <label>
+                        <label style="font-weight: normal;">
                             <input type="checkbox" name="consult-property" value="${propKey}" data-model="${modelKey}">
                             <strong>${model.properties[propKey].title}</strong> (raktas: <code>${propKey}</code>) - <em>${model.properties[propKey].description}</em>
                         </label>
@@ -102,12 +110,21 @@ document.addEventListener('DOMContentLoaded', () => {
             propertiesHTML += `</div>`;
             propertiesContainer.innerHTML += propertiesHTML;
         });
-        document.getElementById('consult-properties-container').style.display = state.selectedModels.length > 0 ? 'block' : 'none';
+
+        const container = document.getElementById('consult-properties-container');
+        if (container) {
+            container.style.display = state.selectedModels.length > 0 ? 'block' : 'none';
+        }
     };
 
     // --- ĮVYKIAI FORMOJE ---
     document.addEventListener('change', (e) => {
-        const { name, value, checked, dataset: elDataset } = e.target;
+        const target = e.target;
+        if (!target) return;
+
+        const name = target.name;
+        const value = target.value;
+        const checked = target.checked;
 
         if (name === 'consult-dataset') {
             state = { selectedDataset: value, selectedModels: [], selectedProperties: {} };
@@ -127,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (name === 'consult-property') {
-            const modelKey = e.target.getAttribute('data-model');
+            const modelKey = target.getAttribute('data-model');
             if (checked) {
                 state.selectedProperties[modelKey].push(value);
             } else {
@@ -137,77 +154,88 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- KONSULTACIJOS PATEIKIMAS ---
-    submitBtn.addEventListener('click', () => {
-        const purpose = document.getElementById('consult-dataPurpose').value.trim();
-        const legalBasis = document.getElementById('consult-legalBasis').value.trim();
-
-        if (!purpose) {
-            alert('Prašome nurodyti duomenų tvarkymo tikslą arba rūpimus klausimus.');
-            return;
-        }
-
-        // Suformuojame detalią siūlomą apimtį pagal pasirinktus modelius ir savybes
-        let scopeSummary = `**Teisinis pagrindas:** ${legalBasis}\n\n**Prašoma duomenų apimtis:**\n`;
-        
-        if (state.selectedDataset) {
-            const dataset = dataStructure[state.selectedDataset];
-            scopeSummary += `Rinkinys: "${dataset.title}"\n`;
+    if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+            const purposeInput = document.getElementById('consult-dataPurpose');
+            const purpose = purposeInput ? purposeInput.value.trim() : '';
             
-            if (state.selectedModels.length > 0) {
-                state.selectedModels.forEach(modelKey => {
-                    const model = dataset.models[modelKey];
-                    scopeSummary += `\n- Modelis: "${model.title}" (URI: \`${model.uri || 'Nėra'}\`)`;
-                    if (model.eli) scopeSummary += ` (ELI: ${model.eli})`;
-                    
-                    const props = state.selectedProperties[modelKey] || [];
-                    if (props.length > 0) {
-                        scopeSummary += `\n  Savybės:\n`;
-                        props.forEach(propKey => {
-                            const prop = model.properties[propKey];
-                            scopeSummary += `    * ${prop.title} (URI: \`${prop.uri || 'Nėra'}\`) - ${prop.description}\n`;
-                        });
-                    } else {
-                        scopeSummary += `\n  (Savybės nepasirinktos - prašoma parinkti arba konsultuotis dėl viso modelio)\n`;
-                    }
-                });
-            } else {
-                scopeSummary += `\n(Nepasirinktas joks konkretus modelis – reikalinga pagalba suformuojant duomenų modelį iš esmės)`;
+            const legalBasisInput = document.getElementById('consult-legalBasis');
+            const legalBasis = legalBasisInput ? legalBasisInput.value.trim() : 'Nurodyta poreikyje';
+
+            if (!purpose) {
+                alert('Prašome nurodyti duomenų tvarkymo tikslą arba rūpimus klausimus.');
+                return;
             }
-        } else {
-            scopeSummary += `Nenurodyta (reikalinga konsultacija nuo nulio)`;
-        }
 
-        const newConsultation = {
-            id: Date.now(),
-            purpose: purpose,
-            legalBasis: legalBasis,
-            status: 'Pateikta, laukia teikėjo atsakymo',
-            messages: [
-                { sender: 'recipient', text: `**Klausimas / poreikis:**\n${purpose}` },
-                { sender: 'recipient', text: scopeSummary }
-            ]
-        };
+            let scopeSummary = `**Teisinis pagrindas:** ${legalBasis}\n\n**Prašoma duomenų apimtis:**\n`;
+            
+            if (state.selectedDataset) {
+                const dataset = dataStructure[state.selectedDataset];
+                scopeSummary += `Rinkinys: "${dataset.title}"\n`;
+                
+                if (state.selectedModels.length > 0) {
+                    state.selectedModels.forEach(modelKey => {
+                        const model = dataset.models[modelKey];
+                        scopeSummary += `\n- Modelis: "${model.title}" (URI: \`${model.uri || 'Nėra'}\`)`;
+                        if (model.eli) scopeSummary += ` (ELI: ${model.eli})`;
+                        
+                        const props = state.selectedProperties[modelKey] || [];
+                        if (props.length > 0) {
+                            scopeSummary += `\n  Savybės:\n`;
+                            props.forEach(propKey => {
+                                const prop = model.properties[propKey];
+                                scopeSummary += `    * ${prop.title} (URI: \`${prop.uri || 'Nėra'}\`) - ${prop.description}\n`;
+                            });
+                        } else {
+                            scopeSummary += `\n  (Savybės nepasirinktos - prašoma parinkti arba konsultuotis dėl viso modelio)\n`;
+                        }
+                    });
+                } else {
+                    scopeSummary += `\n(Nepasirinktas joks konkretus modelis – reikalinga pagalba suformuojant duomenų modelį iš esmės)`;
+                }
+            } else {
+                scopeSummary += `Nenurodyta (reikalinga konsultacija nuo nulio)`;
+            }
 
-        allConsultations.push(newConsultation);
-        localStorage.setItem('consultations', JSON.stringify(allConsultations));
-        alert('Konsultacijos užklausa sėkmingai pateikta Teikėjui!');
-        
-        // Išvalome būseną ir formą
-        state = { selectedDataset: null, selectedModels: [], selectedProperties: {} };
-        document.getElementById('consultation-form').reset();
-        document.getElementById('consult-models-container').style.display = 'none';
-        document.getElementById('consult-properties-container').style.display = 'none';
-        
-        renderActiveConsultations();
-    });
+            const newConsultation = {
+                id: Date.now(),
+                purpose: purpose,
+                legalBasis: legalBasis,
+                status: 'Pateikta, laukia teikėjo atsakymo',
+                messages: [
+                    { sender: 'recipient', text: `**Klausimas / poreikis:**\n${purpose}` },
+                    { sender: 'recipient', text: scopeSummary }
+                ]
+            };
 
-    // --- ESAMŲ KONSULTACIJŲ AKTYVUS SĄRAŠAS IR LANGO ATIDARYMAS ---
+            allConsultations.push(newConsultation);
+            localStorage.setItem('consultations', JSON.stringify(allConsultations));
+            alert('Konsultacijos užklausa sėkmingai pateikta Teikėjui!');
+            
+            // Išvalome būseną
+            state = { selectedDataset: null, selectedModels: [], selectedProperties: {} };
+            const formEl = document.getElementById('consultation-form');
+            if (formEl) formEl.reset();
+            
+            const modelsCont = document.getElementById('consult-models-container');
+            const propertiesCont = document.getElementById('consult-properties-container');
+            if (modelsCont) modelsCont.style.display = 'none';
+            if (propertiesCont) propertiesCont.style.display = 'none';
+            
+            renderActiveConsultations();
+        });
+    }
+
+    // --- ESAMŲ KONSULTACIJŲ SĄRAŠAS (APSAUGOTAS FILTRAS) ---
     const renderActiveConsultations = () => {
-        // Iš naujo nuskaitome localStorage, kad užtikrintume atnaujintą informaciją
         allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
-        const activeConsults = allConsultations.filter(c => !c.status.includes('Užbaigta'));
         
+        // Naudojame apsaugotą filtrą (c && c.status), kad neįvyktų klaidos dėl senų įrašų
+        const activeConsults = allConsultations.filter(c => c && c.status && !c.status.includes('Užbaigta'));
+        
+        if (!activeList) return;
         activeList.innerHTML = activeConsults.length ? '' : '<p>Aktyvių konsultacijų nerasta.</p>';
+        
         activeConsults.forEach(consult => {
             const card = document.createElement('div');
             card.className = 'contract-card';
@@ -222,59 +250,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openChatModal = (consultationId) => {
         currentConsultationId = consultationId;
+        allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
         const consult = allConsultations.find(c => c.id === consultationId);
         if (!consult) return;
 
-        modalTitle.textContent = `Konsultacija dėl: "${consult.purpose.substring(0, 40)}..."`;
-        chatHistory.innerHTML = '';
-        
-        consult.messages.forEach(msg => {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `chat-message ${msg.sender}`;
-            // Paverčiame markdown \n į <br> kad gražiai atvaizduotume formatuotą siūlomą apimtį
-            const formattedText = msg.text.replace(/\n/g, '<br>');
-            msgDiv.innerHTML = `<strong>${msg.sender === 'recipient' ? 'Jūs' : 'Teikėjas'}:</strong><p>${formattedText}</p>`;
-            chatHistory.appendChild(msgDiv);
-        });
+        if (modalTitle) modalTitle.textContent = `Konsultacija dėl: "${consult.purpose.substring(0, 40)}..."`;
+        if (chatHistory) {
+            chatHistory.innerHTML = '';
+            consult.messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `chat-message ${msg.sender}`;
+                const formattedText = msg.text.replace(/\n/g, '<br>');
+                msgDiv.innerHTML = `<strong>${msg.sender === 'recipient' ? 'Jūs' : 'Teikėjas'}:</strong><p>${formattedText}</p>`;
+                chatHistory.appendChild(msgDiv);
+            });
+        }
 
-        modal.style.display = 'flex';
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        if (modal) modal.style.display = 'flex';
+        if (chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
     };
 
-    // --- INTERAKTYVŪS ATSAKYMAI DIALOGE ---
-    sendBtn.addEventListener('click', () => {
-        const text = messageInput.value.trim();
-        if (!text || !currentConsultationId) return;
+    // --- PRANEŠIMO SIUNTIMAS DIALOGE ---
+    if (sendBtn) {
+        sendBtn.addEventListener('click', () => {
+            if (!messageInput) return;
+            const text = messageInput.value.trim();
+            if (!text || !currentConsultationId) return;
 
-        const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
-        if (consultIndex > -1) {
-            allConsultations[consultIndex].messages.push({ sender: 'recipient', text: text });
-            allConsultations[consultIndex].status = 'Pateiktas klausimas, laukia teikėjo atsakymo';
-            localStorage.setItem('consultations', JSON.stringify(allConsultations));
-            messageInput.value = '';
-            openChatModal(currentConsultationId); // Atnaujiname dialogą
-            renderActiveConsultations(); // Atnaujiname aktyvų sąrašą
-        }
-    });
+            const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
+            if (consultIndex > -1) {
+                allConsultations[consultIndex].messages.push({ sender: 'recipient', text: text });
+                allConsultations[consultIndex].status = 'Pateiktas klausimas, laukia teikėjo atsakymo';
+                localStorage.setItem('consultations', JSON.stringify(allConsultations));
+                messageInput.value = '';
+                openChatModal(currentConsultationId);
+                renderActiveConsultations();
+            }
+        });
+    }
 
     // --- KONSULTACIJOS UŽBAIGIMAS ---
-    finishBtn.addEventListener('click', () => {
-        if (!currentConsultationId || !confirm('Ar tikrai norite pažymėti šią konsultaciją kaip užbaigtą?')) return;
-        
-        const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
-        if (consultIndex > -1) {
-            allConsultations[consultIndex].status = 'Užbaigta gavėjo';
-            localStorage.setItem('consultations', JSON.stringify(allConsultations));
-            modal.style.display = 'none';
-            renderActiveConsultations();
-        }
-    });
+    if (finishBtn) {
+        finishBtn.addEventListener('click', () => {
+            if (!currentConsultationId || !confirm('Ar tikrai norite pažymėti šią konsultaciją kaip užbaigtą?')) return;
+            
+            const consultIndex = allConsultations.findIndex(c => c.id === currentConsultationId);
+            if (consultIndex > -1) {
+                allConsultations[consultIndex].status = 'Užbaigta gavėjo';
+                localStorage.setItem('consultations', JSON.stringify(allConsultations));
+                if (modal) modal.style.display = 'none';
+                renderActiveConsultations();
+            }
+        });
+    }
 
-    // Dialogo uždarymas
-    closeBtn.addEventListener('click', () => modal.style.display = 'none');
-    window.onclick = (event) => { if (event.target === modal) modal.style.display = 'none'; };
+    // Uždarymas
+    if (closeBtn) closeBtn.addEventListener('click', () => { if (modal) modal.style.display = 'none'; });
+    window.onclick = (event) => { if (event === modal) modal.style.display = 'none'; };
 
-    // --- PRADINIS PUSLAPIO UŽKROVIMAS ---
+    // --- PALEIDIMAS ---
     window.openChatModal = openChatModal;
     renderDatasets();
     renderActiveConsultations();
