@@ -1,20 +1,70 @@
 <!DOCTYPE html>
 <html lang="lt">
-<!-- ... head ... -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teikėjo aplinka - Išmaniosios sutartys</title>
+    <!-- ATKURTA NUORODA Į STILIŲ FAILĄ -->
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-    <!-- ... header, nav, main skilčių pradžia ... -->
+    <header>
+        <div class="container">
+            <h1>Išmaniųjų duomenų sutarčių modulis</h1>
+            <p>Duomenų teikėjo aplinka</p>
+        </div>
+    </header>
+    <nav class="main-nav">
+        <div class="container">
+            <a href="index.html">Sutarčių rengimas</a>
+            <a href="consultations.html">Konsultacijos</a>
+            <a href="provider.html" class="active">Teikėjo aplinka</a>
+            <a href="vssa.html">VSSA aplinka</a>
+        </div>
+    </nav>
     <main class="container">
+        <!-- SUTARČIŲ SKILTIS -->
         <h2>Gautos sutartys derinimui</h2>
-        <div id="contracts-list" class="contracts-list-container"></div>
-        <hr style="margin: 2rem 0;">
+        <p class="helper-text">Čia matote visas duomenų gavėjų pateiktas sutartis, kurios laukia jūsų peržiūros ir patvirtinimo.</p>
+        <div id="contracts-list" class="contracts-list-container">
+            <p>Kraunama...</p>
+        </div>
+        
+        <hr style="margin: 2.5rem 0;">
+
+        <!-- KONSULTACIJŲ SKILTIS -->
         <h2>Gautos konsultacijų užklausos</h2>
-        <div id="provider-consultations-list" class="contracts-list-container"></div>
-        <hr style="margin: 2rem 0;">
+        <p class="helper-text">Čia matote aktyvias gavėjų užklausas. Peržiūrėkite ir tęskite dialogą.</p>
+        <div id="provider-consultations-list" class="contracts-list-container">
+            <p>Kraunama...</p>
+        </div>
+        
+        <hr style="margin: 2.5rem 0;">
+
+        <!-- ARCHYVO SKILTIS -->
         <h2>Konsultacijų archyvas</h2>
-        <ul id="archived-consultations-list" class="archive-list"></ul>
+        <p class="helper-text">Užbaigtų konsultacijų sąrašas peržiūrai.</p>
+        <ul id="archived-consultations-list" class="archive-list">
+            <li class="archive-placeholder">Kraunama...</li>
+        </ul>
     </main>
-    
-    <!-- SUTARČIŲ PERŽIŪROS MODAL -->
+
+    <!-- KONSULTACIJŲ MODALINIS LANGAS -->
+    <div id="chat-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 id="chat-modal-title">Konsultacijos peržiūra</h2>
+            <div id="chat-history" class="chat-history"></div>
+            <div class="chat-input-area" id="chat-input-area">
+                <textarea id="chat-message-input" placeholder="Jūsų atsakymas ar pasiūlymas..." rows="3"></textarea>
+                <button id="send-chat-message">Atsakyti</button>
+            </div>
+            <div class="modal-actions">
+                <button id="close-chat-modal-btn" class="btn-secondary">Uždaryti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUTARČIŲ PERŽIŪROS MODALINIS LANGAS -->
     <div id="agreement-view-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2>Sutarties peržiūra</h2>
@@ -28,7 +78,6 @@
         </div>
     </div>
     
-    <!-- ... (likęs konsultacijų modal langas) ... -->
     <script src="provider.js"></script>
 </body>
 </html>
