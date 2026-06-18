@@ -3,173 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>data.gov.lt – Išmaniųjų sutarčių modulis</title>
+    <title>Gavėjo aplinka - Išmaniosios sutartys</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header>
         <div class="container">
-            <h1 id="header-title">Išmaniųjų duomenų sutarčių modulis</h1>
-            <p id="header-subtitle">[EN] Smart Data Contracts Module</p>
+            <h1>Išmaniųjų duomenų sutarčių modulis</h1>
+            <p>Duomenų gavėjo aplinka / [EN] Data Recipient Environment</p>
         </div>
     </header>
 
-    <!-- VAIDMENŲ PERJUNGIMO MENIU -->
-    <section class="role-switcher-section">
+    <nav class="main-nav">
         <div class="container">
-            <div class="role-switcher" id="role-switcher">
-                <button class="role-btn active" data-role="recipient">
-                    Duomenų gavėjo aplinka<br><span>[EN] Data Recipient Environment</span>
-                </button>
-                <button class="role-btn" data-role="provider">
-                    Duomenų teikėjo aplinka<br><span>[EN] Data Provider Environment</span>
-                </button>
-                <button class="role-btn" data-role="vssa">
-                    VSSA administratoriaus aplinka<br><span>[EN] VSSA Admin Environment</span>
-                </button>
-            </div>
+            <a href="index.html" class="active">Gavėjo aplinka</a>
+            <a href="provider.html">Teikėjo aplinka</a>
+            <a href="vssa.html">VSSA administratoriaus aplinka</a>
         </div>
-    </section>
+    </nav>
 
     <main class="container">
-        <!-- ########## DUOMENŲ GAVĖJO APLINKA ########## -->
-        <div id="view-recipient" class="role-view active">
-            <aside class="side-menu">
-                <h3>Gavėjo meniu</h3>
-                <ul>
-                    <li class="active"><a href="#">Nauja sutartis</a></li>
-                    <li><a href="#">Mano sutartys</a></li>
-                    <li><a href="#">API Raktai</a></li>
-                    <li><a href="#">Paskyra</a></li>
-                </ul>
-            </aside>
-            <div class="main-content">
-                <!-- Čia įkeliame anksčiau sukurtą sutarties kūrimo formą -->
-                <div class="grid-container-inner">
-                    <div class="form-section">
-                        <h2>Naujos sutarties sudarymas</h2>
-                        <form id="agreement-form">
-                            <fieldset>
-                                <legend>I. Sutarties Objektas</legend>
-                                <label for="dataset-search">Ieškoti duomenų rinkinio:</label>
-                                <input type="search" id="dataset-search" placeholder="Įveskite rinkinio pavadinimą...">
-                                <div id="datasets-selection"></div>
-                            </fieldset>
-                            <fieldset>
-                                <legend>II. Sutarties Šalys</legend>
-                                <label>Duomenų teikėjas (Auto):</label>
-                                <input type="text" id="assignerName" readonly>
-                                <input type="text" id="assignerCode" readonly>
-                                <label>Duomenų gavėjas (Jūs):</label>
-                                <input type="text" id="assigneeName" readonly>
-                                <input type="text" id="assigneeCode" readonly>
-                                <input type="text" id="assigneeRep" readonly>
-                            </fieldset>
-                            <fieldset>
-                                <legend>III. Teisinis Pagrindas ir Tikslas</legend>
-                                <label for="legalBasis">Duomenų teikimo teisinis pagrindas:</label>
-                                <input type="text" id="legalBasis" value="Elektroninio archyvo informacinės sistemos nuostatų 23.2 p.">
-                                <label for="dataPurpose">Duomenų tvarkymo tikslas:</label>
-                                <textarea id="dataPurpose" rows="4">EAIS tikslas – skaitmenizuoti Nacionalinio dokumentų fondo (toliau – NDF) dokumentų apskaitos dokumentų derinimo, nuolat saugomų dokumentų, ISR duomenų perdavimo valstybės archyvams, aprašymo, saugojimo, valstybės archyvų saugomo skaitmeninio turinio pateikimo naudotojams procesus.</textarea>
-                                <label for="paymentTerms">Mokėjimo sąlygos:</label>
-                                <select id="paymentTerms">
-                                    <option value="Neatlygintina">Neatlygintina</option>
-                                </select>
-                            </fieldset>
-                            <button type="button" id="generate-pdf">Generuoti PDF peržiūrai</button>
-                        </form>
-                    </div>
-                    <div id="pdf-content" class="preview-section">
-                        <h2>Sutarties peržiūra</h2>
-                        <div id="agreement-preview" class="agreement-text"></div>
-                        <div id="json-preview-container">
-                            <h3>JSON Priedas</h3>
-                            <pre id="json-preview"></pre>
-                        </div>
-                    </div>
-                </div>
+        <div class="grid-container">
+            <!-- Formos skiltis kairėje -->
+            <div class="form-section">
+                <h2>Naujos sutarties sudarymas</h2>
+                <p>[EN] New Agreement Creation</p>
+                <form id="agreement-form">
+                    <fieldset>
+                        <legend>I. Sutarties Objektas / [EN] Subject</legend>
+                        <label for="dataset-search">Ieškoti duomenų rinkinio:</label>
+                        <input type="search" id="dataset-search" placeholder="Įveskite rinkinio pavadinimą...">
+                        <p class="small-text">Demonstraciniais tikslais rodomi VĮ "Registrų centras" duomenų rinkiniai.</p>
+                        <div id="datasets-selection"></div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>II. Sutarties Šalys / [EN] Parties</legend>
+                        <h3>Duomenų teikėjas (Auto)</h3>
+                        <input type="text" id="assignerName" readonly placeholder="Savininkas užsipildys pasirinkus rinkinį">
+                        <input type="text" id="assignerCode" readonly placeholder="Savininko kodas">
+                        <h3>Duomenų gavėjas (Jūs)</h3>
+                        <input type="text" id="assigneeName" readonly>
+                        <input type="text" id="assigneeCode" readonly>
+                        <input type="text" id="assigneeRep" readonly>
+                    </fieldset>
+                    <fieldset>
+                        <legend>III. Teisinis Pagrindas ir Tikslas</legend>
+                        <label for="legalBasis">Duomenų teikimo teisinis pagrindas:</label>
+                        <input type="text" id="legalBasis" value="Elektroninio archyvo informacinės sistemos nuostatų 23.2 p.">
+                        <label for="dataPurpose">Duomenų tvarkymo tikslas:</label>
+                        <textarea id="dataPurpose" rows="5">EAIS tikslas – skaitmenizuoti Nacionalinio dokumentų fondo (toliau – NDF) dokumentų apskaitos dokumentų derinimo, nuolat saugomų dokumentų, ISR duomenų perdavimo valstybės archyvams, aprašymo, saugojimo, valstybės archyvų saugomo skaitmeninio turinio pateikimo naudotojams procesus.</textarea>
+                        <label for="paymentTerms">Mokėjimo sąlygos:</label>
+                        <select id="paymentTerms"><option value="Neatlygintina">Neatlygintina</option></select>
+                    </fieldset>
+                    <button type="button" id="submit-agreement">Pateikti sutartį derinimui</button>
+                </form>
             </div>
-        </div>
-
-        <!-- ########## DUOMENŲ TEIKĖJO APLINKA ########## -->
-        <div id="view-provider" class="role-view">
-            <aside class="side-menu">
-                <h3>Teikėjo meniu</h3>
-                <ul>
-                    <li class="active"><a href="#">Sutarčių apžvalga</a></li>
-                    <li><a href="#">Gautos užklausos</a></li>
-                    <li><a href="#">Mano duomenų rinkiniai</a></li>
-                    <li><a href="#">Ataskaitos</a></li>
-                </ul>
-            </aside>
-            <div class="main-content">
-                <h2>Sutarčių apžvalga / [EN] Contracts Dashboard</h2>
-                <p class="helper-text">Matote visas aktyvias, rengiamas ir nutrauktas sutartis, susijusias su Jūsų teikiamais duomenimis.</p>
-                <div class="dashboard-grid">
-                    <div class="dashboard-card status-active">
-                        <h3>Aktyvios sutartys</h3>
-                        <div class="card-metric">12</div>
-                        <p>Sutartys, pagal kurias vyksta duomenų mainai.</p>
-                    </div>
-                    <div class="dashboard-card status-pending">
-                        <h3>Gautos užklausos</h3>
-                        <div class="card-metric">3</div>
-                        <p>Nauji prašymai sudaryti sutartį, laukiantys Jūsų peržiūros.</p>
-                    </div>
-                    <div class="dashboard-card status-terminated">
-                        <h3>Nutrauktos sutartys</h3>
-                        <div class="card-metric">5</div>
-                        <p>Archyvuotos arba nebegaliojančios sutartys.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ########## VSSA ADMINISTRATORIAUS APLINKA ########## -->
-        <div id="view-vssa" class="role-view">
-            <aside class="side-menu">
-                <h3>VSSA meniu</h3>
-                <ul>
-                    <li class="active"><a href="#">Sistemos apžvalga</a></li>
-                    <li><a href="#">Visos sutartys</a></li>
-                    <li><a href="#">Vartotojų valdymas</a></li>
-                    <li><a href="#">Platformos nustatymai</a></li>
-                </ul>
-            </aside>
-            <div class="main-content">
-                <h2>Sistemos būklės apžvalga / [EN] System Health Dashboard</h2>
-                <p class="helper-text">Matote visos Išmaniųjų sutarčių platformos pagrindinius rodiklius realiu laiku.</p>
-                <div class="dashboard-grid">
-                    <div class="dashboard-card status-total">
-                        <h3>Viso sutarčių sistemoje</h3>
-                        <div class="card-metric">157</div>
-                    </div>
-                    <div class="dashboard-card status-active">
-                        <h3>Aktyvių sutarčių</h3>
-                        <div class="card-metric">89</div>
-                    </div>
-                    <div class="dashboard-card status-api">
-                        <h3>API užklausų per val.</h3>
-                        <div class="card-metric">1,245</div>
-                    </div>
-                    <div class="dashboard-card status-users">
-                        <h3>Registruotų organizacijų</h3>
-                        <div class="card-metric">42</div>
-                    </div>
-                </div>
+            <!-- Peržiūros skiltis dešinėje -->
+            <div id="pdf-content" class="preview-section">
+                <h2>Sutarties peržiūra</h2>
+                <div id="agreement-preview" class="agreement-text"></div>
+                <h3>JSON Priedas</h3>
+                <pre id="json-preview"></pre>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Valstybės skaitmeninių sprendimų agentūra</p>
-        </div>
-    </footer>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

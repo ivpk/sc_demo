@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSSA Aplinka - Išmaniosios sutartys</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Išmaniųjų duomenų sutarčių modulis</h1>
+            <p>VSSA administratoriaus aplinka / [EN] VSSA Admin Environment</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="index.html">Gavėjo aplinka</a>
+            <a href="provider.html">Teikėjo aplinka</a>
+            <a href="vssa.html" class="active">VSSA administratoriaus aplinka</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2>Sistemos apžvalga</h2>
+        <p class="helper-text">Matote visų sistemoje esančių sutarčių būsenas.</p>
+        <div id="vssa-contracts-list" class="dashboard-grid">
+             <p>Sutarčių nerasta.</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const vssaList = document.getElementById('vssa-contracts-list');
+            const agreements = JSON.parse(localStorage.getItem('agreements')) || [];
+            
+            const totalCount = agreements.length;
+            const activeCount = agreements.filter(a => a.status === 'active').length; // Simuliacija
+            const pendingCount = agreements.filter(a => a.status !== 'active').length; // Simuliacija
+
+            vssaList.innerHTML = `
+                <div class="dashboard-card status-total">
+                    <h3>Viso sutarčių</h3>
+                    <div class="card-metric">${totalCount}</div>
+                </div>
+                <div class="dashboard-card status-pending">
+                    <h3>Laukia patvirtinimo</h3>
+                    <div class="card-metric">${pendingCount}</div>
+                </div>
+                <div class="dashboard-card status-active">
+                    <h3>Aktyvios</h3>
+                    <div class="card-metric">${activeCount}</div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
