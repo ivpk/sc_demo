@@ -1,12 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DUOMENYS IR BAZINIAI NUSTATYMAI ---
+    // --- DUOMENŲ STRUKTŪRA SU DVIEM RINKINIAIS ---
     const dataStructure = {
         "datasets/gov/rc/ar/text_with_coordinates": {
             id: 4071, title: "Adresų duomenys su koordinatėmis", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246",
             models: {
-                "AdminUnit": { title: "Administracinis vienetas", uri: "cv:AdminUnit", eli: "https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.235119/asr#14.1.", properties: { "code": { title: "Kodas", description: "Administracinio vieneto identifikacinis kodas", uri: "cv:code" }, "level": { title: "Tipas", description: "Administracinio vieneto tipas", uri: "cv:level" }, "name_gen@lt": { title: "Vardas (kilm.)", description: "Administracinio vieneto vardas kilmininko linksniu", uri: "rdfs:label" } } },
-                "Location": { title: "Gyvenamoji vietovė", uri: "dct:Location", eli: null, properties: { "code": { title: "Kodas", description: "Gyvenamosios vietovės identifikavimo kodas", uri: "dct:identifier" }, "name@lt": { title: "Vardas (vard.)", description: "Gyvenamosios vietovės vardas vardininko linksniu", uri: "locn:geographicName" }, "admin_unit": { title: "Administracinis vienetas", description: "Seniūnijos ar savivaldybės kodas" } } },
-                "Street": { title: "Gatvė", uri: "dct:Location", eli: null, properties: { "code": { title: "Kodas", description: "Gatvės identifikavimo kodas", uri: "dct:identifier" }, "name_gen@lt": { title: "Vardas (kilm.)", description: "Gatvės vardas kilmininko linksniu", uri: "locn:geographicName" }, "location": { title: "Gyvenvietė", description: "Gyvenamosios vietovės kodas", uri: "locn:location" } } }
+                "AdminUnit": { title: "Administracinis vienetas", uri: "cv:AdminUnit", properties: { "code": { title: "Kodas", description: "Administracinio vieneto ID", uri: "cv:code" }, "level": { title: "Tipas", description: "Vieneto tipas (apskritis, savivaldybė)", uri: "cv:level" }, "name_gen@lt": { title: "Vardas", description: "Vieneto vardas kilmininko linksniu", uri: "rdfs:label" } } },
+                "Location": { title: "Gyvenamoji vietovė", uri: "dct:Location", properties: { "code": { title: "Kodas", description: "Gyvenamosios vietovės ID", uri: "dct:identifier" }, "name@lt": { title: "Vardas", description: "Gyvenamosios vietovės vardas", uri: "locn:geographicName" } } }
+            }
+        },
+        "datasets/gov/rc/jar/at4020_trumpas_israsas": {
+            id: 3987, title: "Juridinių asmenų registro duomenys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246",
+            models: {
+                "JuridinisAsmuo": { title: "Juridinis asmuo", uri: "rc:JuridinisAsmuo", properties: { "kodas": { title: "Kodas", description: "Juridinio asmens kodas", uri: "rc:kodas" }, "pavadinimas@lt": { title: "Pavadinimas", description: "Juridinio asmens pavadinimas", uri: "rc:pavadinimas" }, "statusas": { title: "Statusas", description: "Teisinio statuso kodas", uri: "rc:statusas" } } },
+                "Adresas": { title: "Adresas (JAR)", uri: "rc:Adresas", properties: { "adresas_txt@lt": { title: "Adresas (tekstu)", description: "Juridinio asmens buveinės adresas", uri: "rc:adresas_txt" }, "busena": { title: "Būsena", description: "Adreso būsena registre", uri: "rc:busena" } } }
             }
         }
     };
@@ -24,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const sentAgreementsList = document.getElementById('sent-agreements-list');
     const agreementModal = document.getElementById('agreement-view-modal');
 
-    // --- SUTARTIES TEKSTO GENERAVIMAS (BENDRA FUNKCIJA) ---
+    // --- BENDRA SUTARTIES TEKSTO GENERAVIMO FUNKCIJA ---
     const generateAgreementText = (agreement) => {
-        if (!agreement || !agreement.assigner || !agreement.assignee) return "Trūksta sutarties duomenų.";
+        if (!agreement || !agreement.assigner) return "Trūksta sutarties duomenų.";
         const datasetKey = Object.keys(dataStructure).find(key => dataStructure[key].ownerCode === agreement.assigner.uid);
         const datasetInfo = dataStructure[datasetKey];
         if (!datasetInfo) return "Klaida: Duomenų rinkinys nerastas.";
@@ -39,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const model = datasetInfo.models[modelKey];
             if (model) {
                 text += `\nModelis: ${model.title} (URI: ${model.uri})\n`;
-                const props = perm.constraint && perm.constraint[0] ? perm.constraint[0].rightOperand : [];
+                const props = perm.constraint[0].rightOperand;
                 props.forEach(propUri => {
                     const propKey = Object.keys(model.properties).find(k => model.properties[k].uri === propUri);
                     if (propKey) text += `    - ${model.properties[propKey].title}: ${model.properties[propKey].description}\n`;
@@ -49,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         text += `\nIII. SĄLYGOS\nTeisinis pagrindas: ${agreement.legalBasis || 'Nenurodyta'}\nTikslas: ${agreement.dataPurpose || 'Nenurodyta'}`;
         return text;
     };
-
+    
     // --- GAVĖJO APLINKOS FUNKCIJOS ---
     const renderDatasets = () => {
         if (!datasetsContainer) return;
@@ -60,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderModels = (datasetKey) => {
-        if (!modelsContainer) return;
+        if (!modelsContainer || !dataStructure[datasetKey]) return;
         const dataset = dataStructure[datasetKey];
         modelsContainer.innerHTML = '';
         Object.keys(dataset.models).forEach(modelKey => {
@@ -70,12 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderProperties = () => {
-        if (!propertiesContainer) return;
-        propertiesContainer.innerHTML = '';
+        if (!propertiesContainer || !state.selectedDataset) return;
         const dataset = dataStructure[state.selectedDataset];
-        if (!dataset) return;
+        propertiesContainer.innerHTML = '';
         state.selectedModels.forEach(modelKey => {
             const model = dataset.models[modelKey];
+            if (!model) return;
             let propertiesHTML = `<div class="property-group"><h4>${model.title} savybės</h4>`;
             Object.keys(model.properties).forEach(propKey => {
                 propertiesHTML += `<label><input type="checkbox" name="property" value="${propKey}" data-model="${modelKey}"><strong>${model.properties[propKey].title}</strong><em> - ${model.properties[propKey].description}</em></label>`;
@@ -96,13 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!state.selectedDataset) return null;
         const dataset = dataStructure[state.selectedDataset];
         const json = {
-            uid: `https://data.gov.lt/ID/Agreement/${Date.now()}`,
-            type: "Agreement",
+            uid: `https://data.gov.lt/ID/Agreement/${Date.now()}`, type: "Agreement",
             assigner: { uid: dataset.ownerCode, "ex:companyName": dataset.owner },
             assignee: { uid: loggedInUser.code, "ex:companyName": loggedInUser.name },
-            status: "Laukia peržiūros",
-            legalBasis: form.legalBasis.value,
-            dataPurpose: form.dataPurpose.value,
+            status: "Laukia peržiūros", legalBasis: form.legalBasis.value, dataPurpose: form.dataPurpose.value,
             permission: []
         };
         Object.entries(state.selectedProperties).forEach(([modelKey, props]) => {
@@ -136,19 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-
-  
     const openAgreementModal = (uid) => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const agreement = allAgreements.find(a => a.uid === uid);
         if (!agreement || !agreementModal) return;
-        // PATAISYMAS: Naudojame ID iš modalinio lango
         document.getElementById('modal-agreement-text').textContent = generateAgreementText(agreement);
         document.getElementById('modal-agreement-json').textContent = JSON.stringify(agreement, null, 2);
         agreementModal.style.display = 'flex';
     };
-
-
 
     // --- ĮVYKIŲ KLAUSYTOJAI ---
     form.addEventListener('change', (e) => {
