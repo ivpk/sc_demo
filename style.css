@@ -9,21 +9,8 @@
     --rejected-color: #d32f2f;
     --hover-bg: #eef5f9;
 }
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    background-color: var(--body-bg);
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Bendri elementai */
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; margin: 0; background-color: var(--body-bg); color: var(--text-color); }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 header { background-color: white; padding: 1.5rem 0; text-align: center; border-bottom: 1px solid var(--border-color); }
 header h1 { margin: 0; color: var(--primary-color); }
 header p { margin: 5px 0 0; color: #607d8b; }
@@ -33,15 +20,11 @@ header p { margin: 5px 0 0; color: #607d8b; }
 .main-nav a.active { background-color: var(--primary-color); color: white; }
 main h2 { color: var(--primary-color); margin-top: 0; }
 .grid-container { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; }
-
-/* Formos ir fieldset */
 fieldset { border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1.5rem; padding: 1.5rem; background-color: white; }
 legend { font-weight: bold; color: var(--primary-color); padding: 0 10px; font-size: 1.1rem; }
 label { display: block; margin-bottom: 6px; font-weight: 600; }
 input, select, textarea { width: 100%; padding: 12px; margin-bottom: 1.2rem; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
 input[readonly] { background-color: #f1f3f4; cursor: not-allowed; }
-
-/* Patobulinti pasirinkimo stiliai */
 .selection-container { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); }
 .dataset-item, .model-item { padding: 0; }
 .dataset-item label, .model-item label { display: block; padding: 12px 15px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; border: 1px solid #cfd8dc; background-color: #fafafa; font-weight: 600; margin-bottom: 10px; }
@@ -54,17 +37,9 @@ input[readonly] { background-color: #f1f3f4; cursor: not-allowed; }
 .property-group label:hover { background-color: var(--hover-bg); }
 .property-group label input { width: auto; margin: 3px 12px 0 0; }
 .property-group label em { color: #546e7a; font-size: 0.85rem; margin-left: 5px; }
-
-/* Peržiūros skiltis ir kortelės */
 .preview-section { position: sticky; top: 20px; height: fit-content; }
-.agreement-text { white-space: pre-wrap; font-size: 0.85rem; line-height: 1.5; height: 300px; overflow-y: auto; border: 1px solid #eee; padding: 1rem; background: #fdfdfd; border-radius: 4px; }
-#json-preview, .json-view { background-color: #263238; color: #eceff1; padding: 1rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace; overflow-y: auto; }
-#json-preview { height: 180px; }
-.status-pending { color: var(--pending-color); font-weight: bold; }
-.status-approved { color: var(--success-color); font-weight: bold; }
-.status-rejected { color: var(--rejected-color); font-weight: bold; }
-
-/* Mygtukai */
+#agreement-preview.agreement-text { height: 240px; }
+#json-preview { background-color: #263238; color: #eceff1; padding: 1rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace; overflow-y: auto; height: 150px; }
 button { border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background-color 0.2s; padding: 12px; width: 100%; }
 .btn-primary { background-color: var(--primary-color); color: white; }
 .btn-primary:hover { background-color: var(--primary-hover); }
@@ -74,37 +49,32 @@ button { border: none; border-radius: 6px; font-weight: bold; cursor: pointer; t
 .btn-success:hover { background-color: #1b5e20; }
 .btn-danger { background-color: var(--rejected-color); color: white; }
 .btn-danger:hover { background-color: #b71c1c; }
-
-/* Išsiųstų/Gautų sutarčių kortelės */
+.status-pending { color: var(--pending-color); font-weight: bold; }
+.status-approved { color: var(--success-color); font-weight: bold; }
+.status-rejected { color: var(--rejected-color); font-weight: bold; }
+.rejection-reason { font-style: italic; background-color: #fff5f5; border-left: 3px solid var(--rejected-color); padding: 8px; margin-top: 5px; font-size: 0.9rem; border-radius: 0 4px 4px 0; }
+#sent-agreements-container { margin-top: 2rem; }
 .sent-agreement-card { background: white; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .sent-agreement-header { padding: 10px 15px; background: #f9fafb; border-bottom: 1px solid var(--border-color); border-radius: 6px 6px 0 0; font-size: 0.95rem; }
 .sent-agreement-body { padding: 15px; }
-.rejection-reason { font-style: italic; background-color: #fff5f5; border-left: 3px solid var(--rejected-color); padding: 8px; margin-top: 5px; font-size: 0.9rem; border-radius: 0 4px 4px 0; }
 .contract-card { background: white; border: 1px solid var(--border-color); border-left: 5px solid var(--pending-color); padding: 1.2rem; border-radius: 6px; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 .contract-card.status-approved-border { border-left-color: var(--success-color); }
 .contract-card.status-rejected-border { border-left-color: var(--rejected-color); }
-
-/* Modal langai */
 .modal-overlay { position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
-.modal-content { background-color: white; width: 95%; max-width: 850px; border-radius: 8px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column; }
+.modal-content { background-color: white; width: 95%; max-width: 900px; border-radius: 8px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column; }
 .modal-actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
-
-/* Konsultacijų modal */
 .chat-history { height: 300px; overflow-y: auto; border: 1px solid var(--border-color); padding: 1rem; margin-bottom: 1rem; background-color: #fafafa; }
 .chat-message { margin-bottom: 1rem; padding: 10px 14px; border-radius: 8px; max-width: 85%; }
 .chat-message.recipient { background-color: #e3f2fd; margin-right: auto; }
 .chat-message.provider { background-color: #e8f5e9; margin-left: auto; }
 .chat-input-area { display: flex; gap: 10px; }
 .chat-input-area textarea { flex-grow: 1; margin-bottom: 0; }
-
-/* Universalus 50/50 peržiūros lango stilius */
-.modal-split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; flex-grow: 1; min-height: 380px; max-height: 50vh; overflow: hidden; margin-bottom: 1rem; }
+.modal-split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; flex-grow: 1; min-height: 0; margin-bottom: 1rem; }
 .modal-column { display: flex; flex-direction: column; overflow: hidden; }
 .modal-column h3 { margin: 0 0 0.5rem; font-size: 1rem; color: var(--primary-color); }
-.modal-column .agreement-text, .modal-column .json-view { flex-grow: 1; height: 100%; box-sizing: border-box; margin: 0; }
-
-/* Archyvo stilius */
+.modal-column .agreement-text, .modal-column .json-view { flex-grow: 1; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; padding: 1rem; font-size: 0.85rem; box-sizing: border-box; margin: 0; }
+.modal-column .agreement-text { background: #fdfdfd; white-space: pre-wrap; line-height: 1.5; }
+.modal-column .json-view { background-color: #263238; color: #eceff1; font-family: monospace; }
 .archive-list { list-style: none; padding: 0; margin: 0; }
 .archive-list li { background: #fafbfc; margin-bottom: 8px; border: 1px solid var(--border-color); border-radius: 4px; }
-.archive-list li:hover { background: #eceff1; }
-.archive-list li a { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-color); font-weight: 500; font-size: 0.9rem; }
+.archive-list li a { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-color); font-weight: 500; }
