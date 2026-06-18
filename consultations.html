@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konsultacijos - Išmaniosios sutartys</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Konsultacija dėl duomenų apimties</h1>
+            <p>Duomenų gavėjo aplinka / [EN] Data Recipient Environment</p>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <a href="index.html">Sutarčių rengimas</a>
+            <a href="consultations.html" class="active">Konsultacijos</a>
+            <a href="provider.html">Teikėjo aplinka</a>
+            <a href="vssa.html">VSSA aplinka</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="grid-container">
+            <!-- Kairė pusė: Užklausos forma -->
+            <div class="form-section">
+                <h2>Nauja konsultacijos užklausa</h2>
+                <p class="helper-text">Aprašykite savo poreikį, pridėkite aktualius duomenų rinkinius (jei žinote) arba palikite lauką tuščią, jei norite, kad Teikėjas pasiūlytų apimtį.</p>
+                <form id="consultation-form">
+                    <fieldset>
+                        <legend>1. Poreikio aprašymas</legend>
+                        <label for="consult-legalBasis">Duomenų teikimo teisinis pagrindas:</label>
+                        <input type="text" id="consult-legalBasis" value="Viešojo intereso užduotis">
+                        
+                        <label for="consult-dataPurpose">Duomenų tvarkymo tikslas (Kuo detaliau):</label>
+                        <textarea id="consult-dataPurpose" rows="5" placeholder="Pvz., norime atlikti atvirų duomenų poveikio Lietuvos ekonomikai analizę..."></textarea>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>2. Siūloma duomenų apimtis (nebūtina)</legend>
+                        <label for="consult-dataset-search">Ieškoti ir pridėti duomenų rinkinį:</label>
+                        <input type="search" id="consult-dataset-search" placeholder="Ieškoti VĮ 'Registrų centras' rinkinių...">
+                        <div id="consult-datasets-selection"></div>
+                        
+                        <div id="consult-selected-datasets" class="selected-items-list">
+                            <h4>Pridėti rinkiniai:</h4>
+                            <!-- Čia bus rodomi pasirinkti rinkiniai -->
+                        </div>
+                    </fieldset>
+                    
+                    <button type="button" id="submit-consultation">Pateikti konsultaciją Teikėjui</button>
+                </form>
+            </div>
+
+            <!-- Dešinė pusė: Aktyvios konsultacijos -->
+            <div class="preview-section">
+                <h2>Jūsų aktyvios konsultacijos</h2>
+                <div id="active-consultations-list" class="contracts-list-container">
+                    <p>Aktyvių konsultacijų nerasta.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="consultations.js"></script>
+</body>
+</html>
