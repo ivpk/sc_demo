@@ -7,6 +7,7 @@
     --card-bg: #ffffff;
     --success-color: #2e7d32;
     --pending-color: #ff9800;
+    --hover-bg: #eef5f9; /* Fono spalva užvedus pelę */
 }
 
 body {
@@ -89,34 +90,35 @@ main h2 {
 /* Formos elementai */
 fieldset {
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 1.5rem;
-    padding: 1.2rem;
+    padding: 1.5rem;
     background-color: white;
 }
 
 legend {
     font-weight: bold;
     color: var(--primary-color);
-    padding: 0 8px;
+    padding: 0 10px;
+    font-size: 1.1rem;
 }
 
 label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 input, select, textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 1.2rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     box-sizing: border-box;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 input[readonly] {
@@ -125,29 +127,97 @@ input[readonly] {
     cursor: not-allowed;
 }
 
-/* Duomenų rinkinių sritis */
-#datasets-selection {
-    max-height: 150px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 8px;
+
+/* ================================================ */
+/* === PATOBULINTI PASIRINKIMŲ STILIAI (NAUJA) === */
+/* ================================================ */
+
+/* Konteineris modelių ar savybių žingsniui */
+.selection-container {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* Vieno pasirinkimo eilutė (Rinkinys, Modelis) */
+.dataset-item,
+.model-item {
+    padding: 4px 0;
+}
+
+/* Stilius visam paspaudžiamam plotui aplink varnelę/tašką */
+.dataset-item label,
+.model-item label {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.dataset-item label:hover,
+.model-item label:hover {
+    background-color: var(--hover-bg);
+    border-color: #b0bec5;
+}
+
+/* Išryškiname aktyvų (pažymėtą) pasirinkimą */
+input[type="radio"]:checked + label,
+input[type="checkbox"]:checked + label {
+    background-color: #e3f2fd;
+    border-color: var(--primary-color);
+}
+
+/* Grupė savybėms, priklausančioms vienam modeliui */
+.property-group {
+    margin-top: 1rem;
+    padding: 1rem;
+    padding-top: 0.5rem;
+    border: 1px solid #eceff1;
+    border-radius: 6px;
+    background-color: #fafafa;
+}
+
+.property-group h4 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+/* Stilius vienos savybės eilutei */
+.property-group label {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 12px;
+    margin-bottom: 4px;
     border-radius: 4px;
-    background: #fafafa;
-}
-
-.dataset-item {
-    padding: 6px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.dataset-item:last-child {
-    border-bottom: none;
-}
-
-.dataset-item label {
     font-weight: normal;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
+
+.property-group label:hover {
+    background-color: var(--hover-bg);
+}
+
+.property-group label input {
+    width: auto; /* Sutraukiam checkbox plotį */
+    margin: 3px 10px 0 0; /* Atstumas nuo teksto */
+}
+
+.property-group label em {
+    color: #546e7a;
+    font-size: 0.85rem;
+    margin-left: 5px;
+}
+/* ================================================ */
+/* ============== PABAIGA NAUJŲ STILIŲ ============ */
+/* ================================================ */
+
 
 /* Sutarties peržiūra */
 .preview-section {
@@ -236,45 +306,6 @@ button {
     font-weight: bold;
 }
 
-/* Paieškos rezultatai ir pasirinkimai konsultacijų puslapyje */
-.search-result-item {
-    padding: 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
-}
-
-.search-result-item:hover {
-    background-color: #f0f0f0;
-}
-
-.selected-items-list {
-    margin-top: 1rem;
-    padding: 1rem;
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.selected-item {
-    background-color: #cfd8dc;
-    padding: 6px 12px;
-    border-radius: 20px;
-    display: inline-block;
-    margin: 5px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.provider-response {
-    margin-top: 12px;
-    padding: 12px;
-    background-color: #e8f5e9;
-    border-left: 4px solid var(--success-color);
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
 /* VSSA Dashboard */
 .dashboard-grid {
     display: grid;
@@ -322,7 +353,7 @@ footer {
     margin-top: 5px;
 }
 
-/* --- KONSULTACIJŲ POKALBIŲ LANGO (MODAL) STILIAI --- */
+/* --- KONSULTACIJŲ POKALBIŲ LANGAS (MODAL) --- */
 .modal-overlay {
     position: fixed;
     z-index: 100;
