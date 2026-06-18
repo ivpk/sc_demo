@@ -48,16 +48,31 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- SUTARČIŲ PERŽIŪROS FUNKCIJOS ---
+
+
+       
     const openAgreementModal = (uid) => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const agreement = allAgreements.find(a => a && a.uid === uid);
         if (!agreement) { alert('Klaida: sutartis nerasta.'); return; }
 
-        document.getElementById('agreement-view-text').textContent = generateAgreementText(agreement);
-        document.getElementById('agreement-view-json').textContent = JSON.stringify(agreement, null, 2);
+        // PATAISYMAS: Naudojame ID iš modalinio lango
+        document.getElementById('modal-agreement-text').textContent = generateAgreementText(agreement);
+        document.getElementById('modal-agreement-json').textContent = JSON.stringify(agreement, null, 2);
 
         const actionsContainer = document.getElementById('agreement-modal-actions');
-        actionsContainer.innerHTML = '';
+        actionsContainer.innerHTML = ''; 
+
+        if (agreement.status === "Laukia peržiūros") {
+            const approveBtn = document.createElement('button');
+            // ... (mygtukų logika) ...
+            actionsContainer.appendChild(approveBtn);
+            actionsContainer.appendChild(rejectBtn);
+        }
+        agreementModal.style.display = 'flex';
+    };
+
+
 
         // PATAISYMAS: statusas, kurį siunčia gavėjas, yra "Laukia peržiūros"
         if (agreement.status === "Laukia peržiūros") {
