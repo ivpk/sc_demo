@@ -1,242 +1,157 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // A-Z suderinamas unikalaus ID generavimas
-    const generateUUID = () => {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    };
-
-    // --- DEMO DUOMENŲ RINKINIAI (Registrų centras) ---
+    // --- BENDRIEJI NUSTATYMAI IR DUOMENYS ---
     const demoDatasets = [
-        { id: 3987, name: "Juridinių asmenų registro duomenys (RAW data)", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/jar/imones/:getall,uapi:/jar/imones/:search" },
-        { id: 4071, name: "Adresų registro gatvių tekstinių duomenų rinkinys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/ar/gatves/:getall,uapi:/ar/gatves/:select" },
-        { id: 4088, name: "Nekilnojamojo turto registro pastatų duomenys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/ntr/pastatai/:getall" },
-        { id: 5123, name: "Gyventojų registro statistiniai duomenys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/gyv/statistika/:getall" }
+        { id: 3987, name: "Juridinių asmenų registro duomenys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/jar/imones/:getall" },
+        { id: 4071, name: "Adresų registro gatvių duomenys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246", scopes: "uapi:/ar/gatves/:getall" }
     ];
+    const loggedInUser = { name: "Valstybės skaitmeninių sprendimų agentūra", code: "306279090", representative: "Martynas Mockus" };
+    let currentRole = 'recipient'; // Numatytasis vaidmuo
 
-    // --- VARTOTOJO (GAVĖJO) DUOMENYS ---
-    const loggedInUser = { 
-        name: "Valstybės skaitmeninių sprendimų agentūra", 
-        code: "306279090", 
-        representative: "Martynas Mockus" 
-    };
-
+    // --- ELEMENTŲ NUORODOS ---
+    const roleSwitcher = document.getElementById('role-switcher');
+    const headerTitle = document.getElementById('header-title');
+    // Gavėjo aplinkos elementai
     const form = document.getElementById('agreement-form');
     const previewEl = document.getElementById('agreement-preview');
     const jsonPreviewEl = document.getElementById('json-preview');
     const searchInput = document.getElementById('dataset-search');
     const datasetsContainer = document.getElementById('datasets-selection');
 
-    // --- PILNAS SUTARTIES TEKSTO ŠABLONAS ---
+    // --- PAGRINDINĖ FUNKCIJA: APLINKOS PERJUNGIMAS ---
+    const switchRole = (newRole) => {
+        currentRole = newRole;
+
+        // 1. Atnaujiname mygtukų būseną
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-role') === newRole);
+        });
+
+        // 2. Atnaujiname puslapio antraštę
+        const titles = {
+            recipient: "Išmaniųjų duomenų sutarčių modulis (Gavėjo aplinka)",
+            provider: "Išmaniųjų duomenų sutarčių modulis (Teikėjo aplinka)",
+            vssa: "Išmaniųjų duomenų sutarčių modulis (VSSA Administratorius)"
+        };
+        headerTitle.textContent = titles[newRole];
+
+        // 3. Parodome tik reikiamą aplinkos vaizdą
+        document.querySelectorAll('.role-view').forEach(view => {
+            view.classList.toggle('active', view.id === `view-${newRole}`);
+        });
+    };
+
+    // Priskiriame perjungimo logiką mygtukams
+    roleSwitcher.addEventListener('click', (e) => {
+        const roleButton = e.target.closest('.role-btn');
+        if (roleButton) {
+            const newRole = roleButton.getAttribute('data-role');
+            switchRole(newRole);
+        }
+    });
+
+    // --- SUTARTIES RENGIMO FUNKCIONALUMAS (GAVĖJO APLINKOJE) ---
+    // Pilnas sutarties tekstas
     const agreementTemplate = `
 AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS
-Sudarymo data: [currentDate]
+Data: [currentDate]
 
-I SKYRIUS
-SUTARTIES ŠALYS, TEISINIS PAGRINDAS IR PASKIRTIS
+I SKYRIUS: ŠALYS IR PAGRINDAS
+1. Duomenų teikėjas: [assignerName] (kodas: [assignerCode])
+2. Duomenų gavėjas: [assigneeName] (kodas: [assigneeCode]), atstovaujamas [assigneeRep].
+3. Teisinis pagrindas: [legalBasis]
+4. Tvarkymo tikslas: [dataPurpose]
 
-1. Sutarties šalys
-   Duomenų teikėjas:
-     Pavadinimas: [assignerName]
-     Juridinio asmens kodas: [assignerCode]
+II SKYRIUS: OBJEKTAS
+Sutarties objektas – automatizuotas duomenų teikimas. Duomenys, patenkantys į sutarties sritį:
+[datasets]
 
-   Duomenų gavėjas:
-     Pavadinimas: [assigneeName]
-     Juridinio asmens kodas: [assigneeCode]
-     Atstovas: [assigneeRep]
+III SKYRIUS: SĄLYGOS
+Atsiskaitymo tvarka: [paymentTerms].
+(kitos sutarties dalys...)
+    `;
 
-2. Teisinis pagrindas ir tikslas:
-   Ši sutartis sudaroma vadovaujantis:
-   - Lietuvos Respublikos valstybės informacinių išteklių valdymo įstatymu (VIIVĮ);
-   - Duomenų teikimo teisinis pagrindas: [legalBasis]
-   - Duomenų tvarkymo tikslas: [dataPurpose]
-
-3. Sutarties paskirtis. Šios Automatizuotos duomenų teikimo sutarties (ADTS) paskirtis – nustatyti teisinius santykius tarp Duomenų teikėjo ir Duomenų gavėjo, siekiant automatizuotai teikti ir gauti duomenis išmaniosios sutarties (smart contract) priemonėmis.
-
-II SKYRIUS
-SUTARTIES OBJEKTAS IR DALYKAS
-
-4. Sutarties objektas
-   Duomenų teikėjas įsipareigoja perduoti Duomenų gavėjui duomenis, nurodytus žemiau, o Duomenų gavėjas įsipareigoja gautus duomenis naudoti tik pagal sutartyje nustatytas sąlygas.
-   Duomenys, patenkantys į šios ADTS taikymo sritį:
-   [datasets]
-
-III SKYRIUS
-DUOMENŲ TEIKIMO TVARKA IR SĄLYGOS
-
-5. ADTS įgyvendinimą užtikrinanti infrastruktūra atliekama Centrinėje metaduomenų saugojimo bazėje data.gov.lt, jos Išmaniųjų sutarčių modulyje (ISM).
-6. Duomenų perdavimas vykdomas naudojant universalią duomenų teikimo sąsają (UDTS).
-7. Jei tvarkomi asmens duomenys, šalys privalo laikytis BDAR reikalavimų.
-
-IV SKYRIUS
-DUOMENŲ TEIKĖJO TEISĖS IR PAREIGOS
-
-8. Duomenų teikėjas užtikrina, kad duomenys atitiktų galiojančius standartus.
-9. Duomenų teikėjas turi teisę stebėti, ar Duomenų gavėjo veiksmai atitinka sutarties sąlygas.
-
-V SKYRIUS
-DUOMENŲ GAVĖJO TEISĖS IR PAREIGOS
-
-10. Duomenų gavėjas turi teisę gauti duomenis automatizuotai pagal sutartyje numatytus reikalavimus.
-11. Duomenų gavėjas įsipareigoja naudoti duomenis tik nustatytais tikslais ir neperduoti jų tretiesiems asmenims, nebent tai numatyta teisės aktuose.
-
-VI SKYRIUS
-ATSISKAITYMO TVARKA IR SĄLYGOS
-
-12. Atsiskaitymo tvarka: [paymentTerms]. Jeigu duomenys teikiami atlygintinai, Duomenų gavėjas įsipareigoja apmokėti paslaugas pagal nustatytą tvarką.
-
-VII SKYRIUS
-SUTARTIES NUTRAUKIMAS
-
-13. Šią ADTS turi teisę nutraukti bet kuri iš šalių, apie tai pranešus kitai šaliai. Nutraukimas įsigalioja jį užregistravus ISM.
-
-VIII SKYRIUS
-GINČŲ SPRENDIMAS IR BAIGIAMOSIOS NUOSTATOS
-
-14. Ginčai sprendžiami derybų būdu, o nepavykus – Lietuvos Respublikos teismuose.
-15. Sutartis pasirašoma kvalifikuotais elektroniniais parašais.
-`;
-
-    // Duomenų rinkinių atvaizdavimas sąraše
+    // Duomenų rinkinių atvaizdavimas
     const renderDatasets = (datasets) => {
-        datasetsContainer.innerHTML = datasets.length ? '' : '<p>Pagal paiešką rinkinių nerasta.</p>';
+        datasetsContainer.innerHTML = datasets.length ? '' : '<p>Nerasta.</p>';
         datasets.forEach(ds => {
             const div = document.createElement('div');
             div.className = 'dataset-item';
-            div.innerHTML = `
-                <label>
-                    <input type="checkbox" class="dataset-check" value="${ds.id}" 
-                           data-name="${ds.name}" 
-                           data-scopes="${ds.scopes}" 
-                           data-owner-name="${ds.owner}" 
-                           data-owner-code="${ds.ownerCode}"> 
-                    ${ds.name}
-                </label>`;
+            div.innerHTML = `<label><input type="checkbox" class="dataset-check" value="${ds.id}" data-name="${ds.name}" data-scopes="${ds.scopes}" data-owner-name="${ds.owner}" data-owner-code="${ds.ownerCode}"> ${ds.name}</label>`;
             datasetsContainer.appendChild(div);
         });
     };
 
     // Dinaminis paieškos filtras
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        renderDatasets(demoDatasets.filter(ds => ds.name.toLowerCase().includes(query)));
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            renderDatasets(demoDatasets.filter(ds => ds.name.toLowerCase().includes(query)));
+        });
+    }
 
-    // Sekame bet kokius formos pasikeitimus (įvedimą, pasirinkimą)
-    form.addEventListener('input', () => updatePreview());
-    form.addEventListener('change', (e) => {
-        // Automatinis Duomenų teikėjo (savininko) užpildymas pagal pažymėtą langelį
-        if (e.target.classList.contains('dataset-check')) {
-            const firstChecked = form.querySelector('.dataset-check:checked');
-            document.getElementById('assignerName').value = firstChecked ? firstChecked.dataset.ownerName : '';
-            document.getElementById('assignerCode').value = firstChecked ? firstChecked.dataset.ownerCode : '';
-        }
-        updatePreview();
-    });
+    // Formos sekimas ir automatinis užpildymas
+    if (form) {
+        form.addEventListener('input', () => updatePreview());
+        form.addEventListener('change', (e) => {
+            if (e.target.classList.contains('dataset-check')) {
+                const firstChecked = form.querySelector('.dataset-check:checked');
+                document.getElementById('assignerName').value = firstChecked ? firstChecked.dataset.ownerName : '';
+                document.getElementById('assignerCode').value = firstChecked ? firstChecked.dataset.ownerCode : '';
+            }
+            updatePreview();
+        });
+    }
 
-    // Sutarties peržiūros teksto generavimas
+    // Teksto ir JSON peržiūrų generavimas
     const updatePreview = () => {
         let renderedTemplate = agreementTemplate;
-        
-        // Surenkame visus formos laukus (input, select, textarea)
         const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             const placeholder = `\\[${input.id}\\]`;
             renderedTemplate = renderedTemplate.replace(new RegExp(placeholder, 'g'), input.value || '');
         });
-        
-        // Pakeičiame pažymėtus duomenų rinkinius
-        const selectedDatasets = Array.from(document.querySelectorAll('.dataset-check:checked'))
-            .map(cb => `- ${cb.dataset.name}`).join('\n   ');
-        
-        renderedTemplate = renderedTemplate.replace('[datasets]', selectedDatasets || 'Nepasirinkta jokių duomenų rinkinių.');
+        const selectedDatasets = Array.from(document.querySelectorAll('.dataset-check:checked')).map(cb => `- ${cb.dataset.name}`).join('\n');
+        renderedTemplate = renderedTemplate.replace('[datasets]', selectedDatasets || 'Nepasirinkta.');
         renderedTemplate = renderedTemplate.replace(/\[currentDate\]/g, new Date().toLocaleDateString('lt-LT'));
-
         previewEl.textContent = renderedTemplate;
-        updateJsonPreview();
-    };
 
-    // ODRL JSON priedo generavimas
-    const updateJsonPreview = () => {
+        // JSON atnaujinimas
         const jsonObject = {
-            "@context": { 
-                "@vocab": "http://www.w3.org/ns/odrl.jsonld", 
-                "ex": "http://example.org/vocab#" 
-            },
-            "uid": `https://data.gov.lt/ID/Agreement/${generateUUID()}`,
-            "type": "Agreement",
-            "issued": new Date().toISOString().split('T')[0],
-            "assigner": [{ 
-                "uid": document.getElementById('assignerCode').value || "UNKNOWN", 
-                "ex:companyName": document.getElementById('assignerName').value || "UNKNOWN", 
-                "ex:companyCode": document.getElementById('assignerCode').value || "UNKNOWN" 
-            }],
-            "assignee": [{ 
-                "uid": loggedInUser.code, 
-                "ex:companyName": loggedInUser.name, 
-                "ex:companyCode": loggedInUser.code, 
-                "ex:representative": loggedInUser.representative 
-            }],
-            "ex:legalBasis": document.getElementById('legalBasis').value,
+            "@context": { "@vocab": "http://www.w3.org/ns/odrl.jsonld", "ex": "http://example.org/vocab#" },
+            "uid": `https://data.gov.lt/ID/Agreement/${Date.now()}`,
+            "assigner": { "uid": document.getElementById('assignerCode').value, "name": document.getElementById('assignerName').value },
+            "assignee": { "uid": loggedInUser.code, "name": loggedInUser.name },
             "permission": Array.from(document.querySelectorAll('.dataset-check:checked')).map(cb => ({
-                "target": {
-                    "uid": parseInt(cb.value),
-                    "ex:name": cb.dataset.name,
-                    "ex:scopes": cb.dataset.scopes.split(',')
-                },
-                "action": "use",
-                "constraint": [{
-                    "leftOperand": "purpose",
-                    "operator": "eq",
-                    "rightOperand": document.getElementById('dataPurpose').value
-                }]
-            })),
-            "ex:paymentTerms": document.getElementById('paymentTerms').value
+                "target": { "uid": parseInt(cb.value), "scopes": cb.dataset.scopes.split(',') },
+                "constraint": [{ "leftOperand": "purpose", "operator": "eq", "rightOperand": document.getElementById('dataPurpose').value }]
+            }))
         };
         jsonPreviewEl.textContent = JSON.stringify(jsonObject, null, 2);
     };
 
-    // PDF Atsisiuntimo mygtukas
-    document.getElementById('generate-pdf').addEventListener('click', () => {
-        if (typeof window.jspdf === 'undefined') {
-            alert('PDF biblioteka dar kraunasi, palaukite kelias sekundes...');
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-        const pdfBtn = document.getElementById('generate-pdf');
-        
-        pdfBtn.disabled = true;
-        pdfBtn.textContent = 'Generuojama...';
-
-        html2canvas(document.getElementById('pdf-content'), { scale: 1.5, useCORS: true }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const imgHeight = canvas.height * pdfWidth / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
-            pdf.save('Automatizuota_duomenu_teikimo_sutartis.pdf');
-            
-            pdfBtn.disabled = false;
-            pdfBtn.textContent = 'Generuoti PDF / [EN] Generate PDF';
-        }).catch(err => {
-            console.error('Klaida generuojant PDF:', err);
-            pdfBtn.disabled = false;
-            pdfBtn.textContent = 'Generuoti PDF / [EN] Generate PDF';
+    // PDF Generavimas
+    const generatePdfBtn = document.getElementById('generate-pdf');
+    if (generatePdfBtn) {
+        generatePdfBtn.addEventListener('click', () => {
+            html2canvas(document.getElementById('pdf-content'), { scale: 1.5 }).then(canvas => {
+                const pdf = new jspdf.jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), canvas.height * pdf.internal.pageSize.getWidth() / canvas.width);
+                pdf.save('Sutarties_perziura.pdf');
+            });
         });
-    });
-
-    // --- NUMATYTIEJI NUSTATYMAI PASILEIDŽIANT PUSLAPIUI ---
-    // Užpildome duomenų gavėją (prisijungusį vartotoją)
-    document.getElementById('assigneeName').value = loggedInUser.name;
-    document.getElementById('assigneeCode').value = loggedInUser.code;
-    document.getElementById('assigneeRep').value = loggedInUser.representative;
+    }
     
-    // Sukeliame Registrų centro duomenų rinkinius
-    renderDatasets(demoDatasets);
+    // --- PRADINIS PUSLAPIO PARUOŠIMAS ---
+    // Numatytasis vaidmuo
+    switchRole('recipient'); 
     
-    // Sukuriame pradinę peržiūrą
-    updatePreview();
+    // Užpildome gavėjo duomenis
+    const assigneeNameEl = document.getElementById('assigneeName');
+    if (assigneeNameEl) {
+        assigneeNameEl.value = loggedInUser.name;
+        document.getElementById('assigneeCode').value = loggedInUser.code;
+        document.getElementById('assigneeRep').value = loggedInUser.representative;
+        renderDatasets(demoDatasets);
+        updatePreview();
+    }
 });
