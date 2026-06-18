@@ -7,94 +7,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="container"><h1>Išmaniųjų duomenų sutarčių modulis</h1><p>Duomenų gavėjo aplinka</p></div>
-    </header>
-    <nav class="main-nav">
-        <div class="container">
-            <a href="index.html" class="active">Sutarčių rengimas</a>
-            <a href="consultations.html">Konsultacijos</a>
-            <a href="provider.html">Teikėjo aplinka</a>
-            <a href="vssa.html">VSSA aplinka</a>
-        </div>
-    </nav>
+    <header><div class="container"><h1>Išmaniųjų duomenų sutarčių modulis</h1><p>Duomenų gavėjo aplinka</p></div></header>
+    <nav class="main-nav"><div class="container"><a href="index.html" class="active">Sutarčių rengimas</a><a href="consultations.html">Konsultacijos</a><a href="provider.html">Teikėjo aplinka</a><a href="vssa.html">VSSA aplinka</a></div></nav>
     <main class="container">
         <div class="grid-container">
-            <!-- SUTARTIES RENGIMO FORMA -->
             <div class="form-section">
                 <h2>Naujos sutarties sudarymas</h2>
                 <form id="agreement-form">
-                    <fieldset>
-                        <legend>I. Sutarties Objektas</legend>
-                        <label>1. Pasirinkite duomenų rinkinį:</label>
-                        <div id="datasets-selection"></div>
-                        <div id="models-selection-container" class="selection-container" style="display: none;">
-                            <label>2. Pasirinkite modelius:</label>
-                            <div id="models-selection"></div>
-                        </div>
-                        <div id="properties-selection-container" class="selection-container" style="display: none;">
-                            <label>3. Pasirinkite savybes:</label>
-                            <div id="properties-selection"></div>
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <legend>II. Sutarties Šalys</legend>
-                        <label for="assignerName">Duomenų teikėjas:</label>
-                        <input type="text" id="assignerName" readonly>
-                        <label for="assigneeName">Duomenų gavėjas (Jūs):</label>
-                        <input type="text" id="assigneeName" readonly>
-                    </fieldset>
-                    <fieldset>
-                        <legend>III. Teisinis Pagrindas ir Tikslas</legend>
-                        <label for="legalBasis">Teisinis pagrindas:</label>
-                        <input type="text" id="legalBasis" value="Viešojo administravimo įstatymo 5 str.">
-                        <label for="dataPurpose">Tvarkymo tikslas:</label>
-                        <textarea id="dataPurpose" rows="4">Institucijų veiklos efektyvumo analizei atlikti.</textarea>
-                    </fieldset>
+                    <fieldset><legend>I. Sutarties Objektas</legend><label>1. Pasirinkite duomenų rinkinį:</label><div id="datasets-selection"></div><div id="models-selection-container" class="selection-container" style="display: none;"><label>2. Pasirinkite modelius:</label><div id="models-selection"></div></div><div id="properties-selection-container" class="selection-container" style="display: none;"><label>3. Pasirinkite savybes:</label><div id="properties-selection"></div></div></fieldset>
+                    <fieldset><legend>II. Sutarties Šalys</legend><label for="assignerName">Duomenų teikėjas:</label><input type="text" id="assignerName" readonly><label for="assigneeName">Duomenų gavėjas (Jūs):</label><input type="text" id="assigneeName" readonly></fieldset>
+                    <fieldset><legend>III. Teisinis Pagrindas ir Tikslas</legend><label for="legalBasis">Teisinis pagrindas:</label><input type="text" id="legalBasis" value="Viešojo administravimo įstatymo 5 str."><label for="dataPurpose">Tvarkymo tikslas:</label><textarea id="dataPurpose" rows="4">Institucijų veiklos efektyvumo analizei atlikti.</textarea></fieldset>
                     <button type="button" id="submit-agreement" class="btn-primary">Pateikti sutartį derinimui</button>
                 </form>
             </div>
-
-            <!-- PERŽIŪRA IR PATEIKTŲ SUTARČIŲ SĄRAŠAS -->
             <div class="preview-section">
                 <h2>Sutarties peržiūra</h2>
                 <div id="agreement-preview" class="agreement-text"></div>
-                <h3>JSON Priedas (ODRL)</h3>
+                <h3>JSON Priedas</h3>
                 <pre id="json-preview"></pre>
-                <div id="sent-agreements-container">
-                    <h2>Jūsų pateiktos sutartys</h2>
-                    <div id="sent-agreements-list"><p>Kraunama...</p></div>
-                </div>
+                <div id="sent-agreements-container"><h2>Jūsų pateiktos sutartys</h2><div id="sent-agreements-list"><p>Kraunama...</p></div></div>
             </div>
         </div>
     </main>
-
-    <!-- SUTARČIŲ PERŽIŪROS MODALINIS LANGAS GAVĖJO APLINKOJE (ATNAUJINTA STRUKTŪRA) -->
     <div id="agreement-view-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2>Sutarties peržiūra</h2>
-            
-            <!-- NAUJA 50/50 STRUKTŪRA -->
             <div class="modal-split-layout">
-                <!-- Kairysis stulpelis -->
-                <div class="modal-column">
-                    <h3>Sutarties tekstas</h3>
-                    <div id="modal-agreement-text" class="agreement-text"></div>
-                </div>
-                <!-- Dešinysis stulpelis -->
-                <div class="modal-column">
-                    <h3>JSON Priedas (ODRL)</h3>
-                    <pre id="modal-agreement-json"></pre>
-                </div>
+                <div class="modal-column"><h3>Sutarties tekstas</h3><div id="modal-agreement-text" class="agreement-text"></div></div>
+                <div class="modal-column"><h3>JSON Priedas</h3><pre id="modal-agreement-json" class="json-view"></pre></div>
             </div>
-
-            <!-- Mygtukų skiltis -->
-            <div class="modal-actions">
-                <button id="close-agreement-modal-btn" class="btn-secondary">Uždaryti</button>
-            </div>
+            <div class="modal-actions"><button id="close-agreement-modal-btn" class="btn-secondary">Uždaryti</button></div>
         </div>
     </div>
-    
     <script src="script.js"></script>
 </body>
 </html>
