@@ -9,7 +9,10 @@
 </head>
 <body>
     <header>
-        <div class="container"><h1>Išmaniųjų duomenų sutarčių modulis</h1><p>Duomenų gavėjo aplinka</p></div>
+        <div class="container">
+            <h1>Išmaniųjų duomenų sutarčių modulis</h1>
+            <p>Duomenų gavėjo aplinka</p>
+        </div>
     </header>
     <nav class="main-nav">
         <div class="container">
@@ -21,19 +24,61 @@
     </nav>
     <main class="container">
         <div class="grid-container">
+            <!-- FORMA (ATKURTA) -->
             <div class="form-section">
                 <h2>Naujos sutarties sudarymas</h2>
                 <form id="agreement-form">
-                    <!-- ... forma lieka nepakitusi ... -->
+                    <fieldset>
+                        <legend>I. Sutarties Objektas</legend>
+                        <div class="selection-step">
+                            <label>1. Pasirinkite duomenų rinkinį:</label>
+                            <div id="datasets-selection"></div>
+                        </div>
+                        <div id="models-selection-container" class="selection-container" style="display: none;">
+                            <label>2. Pasirinkite modelius:</label>
+                            <div id="models-selection"></div>
+                        </div>
+                        <div id="properties-selection-container" class="selection-container" style="display: none;">
+                            <label>3. Pasirinkite savybes:</label>
+                            <div id="properties-selection"></div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>II. Sutarties Šalys</legend>
+                        <label for="assignerName">Duomenų teikėjas:</label>
+                        <input type="text" id="assignerName" readonly placeholder="Užsipildys automatiškai">
+                        <label for="assignerCode">Teikėjo kodas:</label>
+                        <input type="text" id="assignerCode" readonly placeholder="Užsipildys automatiškai">
+
+                        <label for="assigneeName">Duomenų gavėjas (Jūs):</label>
+                        <input type="text" id="assigneeName" readonly>
+                        <label for="assigneeCode">Gavėjo kodas:</label>
+                        <input type="text" id="assigneeCode" readonly>
+                         <label for="assigneeRep">Atstovas:</label>
+                        <input type="text" id="assigneeRep" readonly>
+                    </fieldset>
+                    
+                    <fieldset>
+                        <legend>III. Teisinis Pagrindas ir Tikslas</legend>
+                        <label for="legalBasis">Duomenų teikimo teisinis pagrindas:</label>
+                        <input type="text" id="legalBasis" value="Viešojo administravimo įstatymo 5 str.">
+                        <label for="dataPurpose">Duomenų tvarkymo tikslas:</label>
+                        <textarea id="dataPurpose" rows="4">Institucijų veiklos efektyvumo analizei atlikti.</textarea>
+                    </fieldset>
+
+                    <button type="button" id="submit-agreement" class="btn-primary">Pateikti sutartį derinimui</button>
+                    <button type="button" id="generate-pdf" class="btn-secondary" style="margin-top: 10px;">Atsisiųsti PDF peržiūrą</button>
                 </form>
             </div>
+
+            <!-- PERŽIŪRA IR SĄRAŠAS -->
             <div class="preview-section">
                 <h2>Sutarties peržiūra</h2>
-                <div id="agreement-preview" class="agreement-text"></div>
+                <div id="agreement-preview" class="agreement-text">Pasirinkite duomenų rinkinį kairėje...</div>
                 <h3>JSON Priedas (ODRL)</h3>
-                <pre id="json-preview"></pre>
+                <pre id="json-preview">{}</pre>
                 
-                <!-- NAUJA SKILTIS IŠSIŲSTOMS SUTARTIMS -->
                 <div id="sent-agreements-container" style="margin-top: 2rem;">
                     <h2>Jūsų pateiktos sutartys</h2>
                     <div id="sent-agreements-list">
