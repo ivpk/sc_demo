@@ -20,6 +20,7 @@
     </nav>
     <main class="container">
         <div class="grid-container">
+            <!-- SUTARTIES RENGIMO FORMA -->
             <div class="form-section">
                 <h2>Naujos sutarties sudarymas</h2>
                 <form id="agreement-form">
@@ -53,6 +54,8 @@
                     <button type="button" id="submit-agreement" class="btn-primary">Pateikti sutartį derinimui</button>
                 </form>
             </div>
+
+            <!-- PERŽIŪRA IR PATEIKTŲ SUTARČIŲ SĄRAŠAS -->
             <div class="preview-section">
                 <h2>Sutarties peržiūra</h2>
                 <div id="agreement-preview" class="agreement-text"></div>
@@ -65,17 +68,33 @@
             </div>
         </div>
     </main>
+
+    <!-- SUTARČIŲ PERŽIŪROS MODALINIS LANGAS GAVĖJO APLINKOJE (ATNAUJINTA STRUKTŪRA) -->
     <div id="agreement-view-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h2>Sutarties peržiūra</h2>
-            <div id="modal-agreement-text" class="agreement-text"></div>
-            <h3>JSON Priedas (ODRL)</h3>
-            <pre id="modal-agreement-json"></pre>
+            
+            <!-- NAUJA 50/50 STRUKTŪRA -->
+            <div class="modal-split-layout">
+                <!-- Kairysis stulpelis -->
+                <div class="modal-column">
+                    <h3>Sutarties tekstas</h3>
+                    <div id="modal-agreement-text" class="agreement-text"></div>
+                </div>
+                <!-- Dešinysis stulpelis -->
+                <div class="modal-column">
+                    <h3>JSON Priedas (ODRL)</h3>
+                    <pre id="modal-agreement-json"></pre>
+                </div>
+            </div>
+
+            <!-- Mygtukų skiltis -->
             <div class="modal-actions">
                 <button id="close-agreement-modal-btn" class="btn-secondary">Uždaryti</button>
             </div>
         </div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
