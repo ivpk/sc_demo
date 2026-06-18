@@ -65,4 +65,81 @@ document.addEventListener('DOMContentLoaded', () => {
         chatHistory.innerHTML = '';
         (consult.messages || []).forEach(msg => {
             const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${msg.sender}`;
+            msgDiv.innerHTML = `<strong>${msg.sender === 'recipient' ? 'Gavėjas' : 'Teikėjas (Jūs)'}:</strong><p>${(msg.text || '').replace(/\n/g, '<br>')}</p>`;
+            chatHistory.appendChild(msgDiv);
+        });
+        
+        document.getElementById('chat-input-area').style.display = (consult.status && consult.status.includes('Užbaigta')) ? 'none' : 'flex';
+        chatModal.style.display = 'flex';
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
     
+    // --- BENDRIEJI VEIKSMAI (PRANEŠIMŲ SIUNTIMAS, SĄRAŠŲ RODYMAS) ---
+    document.getElementById('send-chat-message').addEventListener('click', () => {
+        const text = document.getElementById('chat-message-input').value.trim();
+        if (!text || !currentConsultationId) return;
+        let allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
+        const consultIndex = allConsultations.findIndex(c => c && c.id === currentConsultationId);
+        if (consultIndex > -1) {
+            allConsultations[consultIndex].messages.push({ sender: 'provider', text: text });
+            allConsultations[consultIndex].status = 'Atsakyta, laukia gavėjo peržiūros';
+            localStorage.setItem('consultations', JSON.stringify(allConsultations));
+            document.getElementById('chat-message-input').value = '';
+            openChatModal(currentConsultationId);
+            renderLists();
+        }
+    });
+
+    const renderLists = () => {
+        const allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
+        const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
+
+        // 1. Sutarčių sąrašas
+        contractsList.innerHTML = allAgreements.length ? '' : '<p>Pateiktų sutarčių nerasta.</p>';
+        allAgreements.forEach(agreement => {
+            if (!agreement) return;
+            const card = document.createElement('div');
+            card.className = 'contract-card';
+            const companyName = agreement.assignee ? (agreement.assignee["ex:companyName"] || "Nenurodyta") : "Nenurodyta";
+            card.innerHTML = `
+                <h3>Sutartis su: ${companyName}</h3>
+                <p><strong>Būsena:</strong> <span class="status-pending">Gauta, laukia peržiūros</span></p>
+                <button class="btn-secondary" onclick="window.openAgreementModal('${agreement.uid}')">Peržiūrėti sutartį</button>
+            `;
+            contractsList.appendChild(card);
+        });
+
+        // 2. Aktyvios konsultacijos
+        const activeConsults = allConsultations.filter(c => c && c.status && !c.status.includes('Užbaigta'));
+        consultationsList.innerHTML = activeConsults.length ? '' : '<p>Naujų konsultacijų nerasta.</p>';
+        activeConsults.forEach(consult => {
+            const card = document.createElement('div');
+            card.className = 'contract-card';
+            card.innerHTML = `<h3>Užklausa: "${(consult.purpose || '').substring(0, 50)}..."</h3><p><strong>Būsena:</strong> <span class="status-pending">${consult.status}</span></p><button class="btn-secondary" onclick="window.openChatModal(${consult.id})">Peržiūrėti ir atsakyti</button>`;
+            consultationsList.appendChild(card);
+        });
+
+        // 3. Konsultacijų archyvas
+        const archivedConsults = allConsultations.filter(c => c && c.status && c.status.includes('Užbaigta'));
+        archiveList.innerHTML = archivedConsults.length ? '' : '<li class="archive-placeholder">Archyve įrašų nėra.</li>';
+        archivedConsults.forEach(consult => {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="#" onclick="window.openChatModal(${consult.id}); return false;"><strong>[Suteikta konsultacija]</strong> ${(consult.purpose || '').substring(0, 60)}...</a>`;
+            archiveList.appendChild(li);
+        });
+    };
+
+    // --- UŽDARYMO LOGIKA ---
+    document.getElementById('close-chat-modal-btn').addEventListener('click', () => chatModal.style.display = 'none');
+    document.getElementById('close-agreement-modal-btn').addEventListener('click', () => agreementModal.style.display = 'none');
+    window.onclick = (event) => {
+        if (event.target === chatModal) chatModal.style.display = 'none';
+        if (event.target === agreementModal) agreementModal.style.display = 'none';
+    };
+    
+    // --- PRADINIS PALEIDIMAS ---
+    window.openChatModal = openChatModal;
+    window.openAgreementModal = openAgreementModal;
+    renderLists();
+});
