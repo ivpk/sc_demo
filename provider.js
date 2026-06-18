@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DUOMENYS SUTARČIŲ ATKŪRIMUI ---
+    // --- DUOMENYS SUTARČIŲ ATKŪRIMUI (Būtina, kad veiktų peržiūra) ---
     const dataStructure = {
         "datasets/gov/rc/ar/text_with_coordinates": {
             id: 4071, title: "Adresų duomenys su koordinatėmis", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246",
@@ -17,19 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const contractsList = document.getElementById('contracts-list');
     const chatModal = document.getElementById('chat-modal');
     const agreementModal = document.getElementById('agreement-view-modal');
-
     let currentConsultationId = null;
 
-    // --- BENDRA SUTARTIES TEKSTO GENERAVIMO FUNKCIJA ---
+    // --- BENDRA, SAUGI SUTARTIES TEKSTO GENERAVIMO FUNKCIJA ---
     const generateAgreementText = (agreement) => {
-        if (!agreement || !agreement.assigner || !agreement.assignee) return "Trūksta sutarties duomenų.";
+        if (!agreement || !agreement.assigner || !agreement.assignee) return "Klaida: trūksta esminių sutarties duomenų.";
+        
         const datasetKey = Object.keys(dataStructure).find(key => dataStructure[key].ownerCode === agreement.assigner.uid);
         const datasetInfo = dataStructure[datasetKey];
-        if (!datasetInfo) return "Klaida: Duomenų rinkinys nerastas.";
+        if (!datasetInfo) return "Klaida: sutartyje nurodytas duomenų rinkinys nerastas sistemoje.";
 
         let text = `AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS\nData: ${new Date(parseInt(agreement.uid.split('/').pop())).toLocaleDateString('lt-LT')}\n\n`;
         text += `I. ŠALYS\n1. Teikėjas: ${agreement.assigner['ex:companyName']}\n2. Gavėjas: ${agreement.assignee['ex:companyName']}\n\n`;
         text += `II. OBJEKTAS\nSuteikiama prieiga prie duomenų rinkinio "${datasetInfo.title}" pagal nurodytą apimtį:\n`;
+        
         (agreement.permission || []).forEach(perm => {
             if (!perm || !perm.target) return;
             const modelKey = perm.target.split('/')[1];
@@ -47,34 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return text;
     };
 
-    // --- SUTARČIŲ PERŽIŪROS FUNKCIJOS ---
-
-
-       
+    // --- SUTARČIŲ MODALINIO LANGO FUNKCIJOS ---
     const openAgreementModal = (uid) => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const agreement = allAgreements.find(a => a && a.uid === uid);
         if (!agreement) { alert('Klaida: sutartis nerasta.'); return; }
 
-        // PATAISYMAS: Naudojame ID iš modalinio lango
         document.getElementById('modal-agreement-text').textContent = generateAgreementText(agreement);
         document.getElementById('modal-agreement-json').textContent = JSON.stringify(agreement, null, 2);
 
         const actionsContainer = document.getElementById('agreement-modal-actions');
         actionsContainer.innerHTML = ''; 
 
-        if (agreement.status === "Laukia peržiūros") {
-            const approveBtn = document.createElement('button');
-            // ... (mygtukų logika) ...
-            actionsContainer.appendChild(approveBtn);
-            actionsContainer.appendChild(rejectBtn);
-        }
-        agreementModal.style.display = 'flex';
-    };
-
-
-
-        // PATAISYMAS: statusas, kurį siunčia gavėjas, yra "Laukia peržiūros"
         if (agreement.status === "Laukia peržiūros") {
             const approveBtn = document.createElement('button');
             approveBtn.className = 'btn-success';
@@ -105,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             agreementModal.style.display = 'none';
         }
     };
-    
-    // --- KONSULTACIJŲ KODAS (nepakito) ---
+
+    // --- KONSULTACIJŲ MODALINIO LANGO FUNKCIJOS ---
     const openChatModal = (consultationId) => {
         currentConsultationId = consultationId;
         const allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
@@ -147,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- BENDRA RENDERINIMO FUNKCIJA ---
+    // --- BENDRA, SAUGI RENDERINIMO FUNKCIJA ---
     const renderLists = () => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
@@ -162,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (agreement.status === 'Atmesta') statusClass = 'status-rejected';
 
                 const card = document.createElement('div');
-                card.className = `contract-card ${statusClass}-border`; // Pridėta klasė rėmeliui
+                card.className = `contract-card ${statusClass}-border`;
                 card.innerHTML = `
                     <h3>Sutartis su: ${agreement.assignee['ex:companyName']}</h3>
                     <p><strong>Statusas:</strong> <span class="${statusClass}">${agreement.status}</span></p>
