@@ -14,9 +14,33 @@
             <div class="form-section">
                 <h2>Naujos sutarties sudarymas</h2>
                 <form id="agreement-form">
-                    <fieldset><legend>I. Sutarties Objektas</legend><label>1. Pasirinkite duomenų rinkinį:</label><div id="datasets-selection"></div><div id="models-selection-container" class="selection-container" style="display: none;"><label>2. Pasirinkite modelius:</label><div id="models-selection"></div></div><div id="properties-selection-container" class="selection-container" style="display: none;"><label>3. Pasirinkite savybes:</label><div id="properties-selection"></div></div></fieldset>
-                    <fieldset><legend>II. Sutarties Šalys</legend><label for="assignerName">Duomenų teikėjas:</label><input type="text" id="assignerName" readonly><label for="assigneeName">Duomenų gavėjas (Jūs):</label><input type="text" id="assigneeName" readonly></fieldset>
-                    <fieldset><legend>III. Teisinis Pagrindas ir Tikslas</legend><label for="legalBasis">Teisinis pagrindas:</label><input type="text" id="legalBasis" value="Viešojo administravimo įstatymo 5 str."><label for="dataPurpose">Tvarkymo tikslas:</label><textarea id="dataPurpose" rows="4">Institucijų veiklos efektyvumo analizei atlikti.</textarea></fieldset>
+                    <fieldset>
+                        <legend>I. Sutarties Objektas</legend>
+                        <label>1. Pasirinkite duomenų rinkinį(-ius):</label>
+                        <div id="datasets-selection"></div>
+                        <div id="models-selection-container" class="selection-container" style="display: none;">
+                            <label>2. Pasirinkite modelius:</label>
+                            <div id="models-selection"></div>
+                        </div>
+                        <div id="properties-selection-container" class="selection-container" style="display: none;">
+                            <label>3. Pasirinkite savybes:</label>
+                            <div id="properties-selection"></div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>II. Sutarties Šalys</legend>
+                        <label for="assignerName">Duomenų teikėjas:</label>
+                        <input type="text" id="assignerName" readonly value="Valstybės įmonė Registrų centras">
+                        <label for="assigneeName">Duomenų gavėjas (Jūs):</label>
+                        <input type="text" id="assigneeName" readonly>
+                    </fieldset>
+                    <fieldset>
+                        <legend>III. Teisinis Pagrindas ir Tikslas</legend>
+                        <label for="legalBasis">Teisinis pagrindas:</label>
+                        <input type="text" id="legalBasis" value="Viešojo administravimo įstatymo 5 str.">
+                        <label for="dataPurpose">Tvarkymo tikslas:</label>
+                        <textarea id="dataPurpose" rows="4">Institucijų veiklos efektyvumo analizei atlikti.</textarea>
+                    </fieldset>
                     <button type="button" id="submit-agreement" class="btn-primary">Pateikti sutartį derinimui</button>
                 </form>
             </div>
