@@ -1,17 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DUOMENYS SUTARČIŲ ATKŪRIMUI (Būtina, kad veiktų peržiūra) ---
+    // --- DUOMENŲ STRUKTŪRA SU DVIEM RINKINIAIS ---
     const dataStructure = {
         "datasets/gov/rc/ar/text_with_coordinates": {
             id: 4071, title: "Adresų duomenys su koordinatėmis", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246",
             models: {
-                "AdminUnit": { title: "Administracinis vienetas", uri: "cv:AdminUnit", eli: "https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.235119/asr#14.1.", properties: { "code": { title: "Kodas", description: "Administracinio vieneto identifikacinis kodas", uri: "cv:code" }, "level": { title: "Tipas", description: "Administracinio vieneto tipas", uri: "cv:level" }, "name_gen@lt": { title: "Vardas (kilm.)", description: "Administracinio vieneto vardas kilmininko linksniu", uri: "rdfs:label" } } },
-                "Location": { title: "Gyvenamoji vietovė", uri: "dct:Location", eli: null, properties: { "code": { title: "Kodas", description: "Gyvenamosios vietovės identifikavimo kodas", uri: "dct:identifier" }, "name@lt": { title: "Vardas (vard.)", description: "Gyvenamosios vietovės vardas vardininko linksniu", uri: "locn:geographicName" }, "admin_unit": { title: "Administracinis vienetas", description: "Seniūnijos ar savivaldybės kodas" } } },
-                "Street": { title: "Gatvė", uri: "dct:Location", eli: null, properties: { "code": { title: "Kodas", description: "Gatvės identifikavimo kodas", uri: "dct:identifier" }, "name_gen@lt": { title: "Vardas (kilm.)", description: "Gatvės vardas kilmininko linksniu", uri: "locn:geographicName" }, "location": { title: "Gyvenvietė", description: "Gyvenamosios vietovės kodas", uri: "locn:location" } } }
+                "AdminUnit": { title: "Administracinis vienetas", uri: "cv:AdminUnit", properties: { "code": { title: "Kodas", description: "Administracinio vieneto ID", uri: "cv:code" }, "level": { title: "Tipas", description: "Vieneto tipas (apskritis, savivaldybė)", uri: "cv:level" }, "name_gen@lt": { title: "Vardas", description: "Vieneto vardas kilmininko linksniu", uri: "rdfs:label" } } },
+                "Location": { title: "Gyvenamoji vietovė", uri: "dct:Location", properties: { "code": { title: "Kodas", description: "Gyvenamosios vietovės ID", uri: "dct:identifier" }, "name@lt": { title: "Vardas", description: "Gyvenamosios vietovės vardas", uri: "locn:geographicName" } } }
+            }
+        },
+        "datasets/gov/rc/jar/at4020_trumpas_israsas": {
+            id: 3987, title: "Juridinių asmenų registro duomenys", owner: "Valstybės įmonė Registrų centras", ownerCode: "124110246",
+            models: {
+                "JuridinisAsmuo": { title: "Juridinis asmuo", uri: "rc:JuridinisAsmuo", properties: { "kodas": { title: "Kodas", description: "Juridinio asmens kodas", uri: "rc:kodas" }, "pavadinimas@lt": { title: "Pavadinimas", description: "Juridinio asmens pavadinimas", uri: "rc:pavadinimas" }, "statusas": { title: "Statusas", description: "Teisinio statuso kodas", uri: "rc:statusas" } } },
+                "Adresas": { title: "Adresas (JAR)", uri: "rc:Adresas", properties: { "adresas_txt@lt": { title: "Adresas (tekstu)", description: "Juridinio asmens buveinės adresas", uri: "rc:adresas_txt" }, "busena": { title: "Būsena", description: "Adreso būsena registre", uri: "rc:busena" } } }
             }
         }
     };
 
-    // --- ELEMENTAI ---
+    // --- LIKĘS KODAS YRA IDENTIŠKAS ANKSTESNIAME ATSAKYME ---
     const consultationsList = document.getElementById('provider-consultations-list');
     const archiveList = document.getElementById('archived-consultations-list');
     const contractsList = document.getElementById('contracts-list');
@@ -19,25 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const agreementModal = document.getElementById('agreement-view-modal');
     let currentConsultationId = null;
 
-    // --- BENDRA, SAUGI SUTARTIES TEKSTO GENERAVIMO FUNKCIJA ---
     const generateAgreementText = (agreement) => {
-        if (!agreement || !agreement.assigner || !agreement.assignee) return "Klaida: trūksta esminių sutarties duomenų.";
-        
+        if (!agreement || !agreement.assigner) return "Klaida: trūksta sutarties duomenų.";
         const datasetKey = Object.keys(dataStructure).find(key => dataStructure[key].ownerCode === agreement.assigner.uid);
         const datasetInfo = dataStructure[datasetKey];
-        if (!datasetInfo) return "Klaida: sutartyje nurodytas duomenų rinkinys nerastas sistemoje.";
+        if (!datasetInfo) return "Klaida: Duomenų rinkinys nerastas.";
 
         let text = `AUTOMATIZUOTA DUOMENŲ TEIKIMO SUTARTIS\nData: ${new Date(parseInt(agreement.uid.split('/').pop())).toLocaleDateString('lt-LT')}\n\n`;
         text += `I. ŠALYS\n1. Teikėjas: ${agreement.assigner['ex:companyName']}\n2. Gavėjas: ${agreement.assignee['ex:companyName']}\n\n`;
         text += `II. OBJEKTAS\nSuteikiama prieiga prie duomenų rinkinio "${datasetInfo.title}" pagal nurodytą apimtį:\n`;
-        
         (agreement.permission || []).forEach(perm => {
-            if (!perm || !perm.target) return;
             const modelKey = perm.target.split('/')[1];
             const model = datasetInfo.models[modelKey];
             if (model) {
                 text += `\nModelis: ${model.title} (URI: ${model.uri})\n`;
-                const props = perm.constraint && perm.constraint[0] ? perm.constraint[0].rightOperand : [];
+                const props = perm.constraint[0].rightOperand;
                 props.forEach(propUri => {
                     const propKey = Object.keys(model.properties).find(k => model.properties[k].uri === propUri);
                     if (propKey) text += `    - ${model.properties[propKey].title}: ${model.properties[propKey].description}\n`;
@@ -47,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
         text += `\nIII. SĄLYGOS\nTeisinis pagrindas: ${agreement.legalBasis || 'Nenurodyta'}\nTikslas: ${agreement.dataPurpose || 'Nenurodyta'}`;
         return text;
     };
-
-    // --- SUTARČIŲ MODALINIO LANGO FUNKCIJOS ---
+    
+    // ... visos kitos funkcijos (openAgreementModal, updateAgreementStatus, openChatModal, renderLists ir t.t.) lieka tokios pačios ...
     const openAgreementModal = (uid) => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const agreement = allAgreements.find(a => a && a.uid === uid);
@@ -90,8 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             agreementModal.style.display = 'none';
         }
     };
-
-    // --- KONSULTACIJŲ MODALINIO LANGO FUNKCIJOS ---
+    
     const openChatModal = (consultationId) => {
         currentConsultationId = consultationId;
         const allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
@@ -131,13 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
             renderLists();
         }
     });
-
-    // --- BENDRA, SAUGI RENDERINIMO FUNKCIJA ---
     const renderLists = () => {
         const allAgreements = JSON.parse(localStorage.getItem('agreements')) || [];
         const allConsultations = JSON.parse(localStorage.getItem('consultations')) || [];
         
-        // SUTARČIŲ RENDERINIMAS
         if (contractsList) {
             const validAgreements = allAgreements.filter(a => a && a.uid && a.status && a.assignee);
             contractsList.innerHTML = validAgreements.length ? '' : '<p>Pateiktų sutarčių nerasta.</p>';
@@ -157,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // KONSULTACIJŲ RENDERINIMAS
         if (consultationsList) {
             const activeConsults = allConsultations.filter(c => c && c.status && !c.status.includes('Užbaigta'));
             consultationsList.innerHTML = activeConsults.length ? '' : '<p>Naujų konsultacijų nerasta.</p>';
@@ -179,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // --- PALEIDIMAS IR UŽDARYMO LOGIKA ---
     window.openAgreementModal = openAgreementModal;
     window.openChatModal = openChatModal;
     document.getElementById('close-chat-modal-btn').addEventListener('click', () => chatModal.style.display = 'none');
