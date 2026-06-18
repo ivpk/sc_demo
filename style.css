@@ -1,112 +1,31 @@
-:root {
-    --primary-color: #005aa3;
-    --text-color: #2c3e50;
-    --border-color: #cfd8dc;
-    --body-bg: #f5f7fa;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    background-color: var(--body-bg);
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-header {
-    background-color: white;
-    padding: 1rem 0;
-    text-align: center;
-    border-bottom: 1px solid var(--border-color);
-}
-
-header h1 { color: var(--primary-color); margin: 0; }
-header p { margin: 5px 0 0; color: #607d8b; }
-
-.main-nav {
-    background-color: #37474f;
-    padding: 10px 0;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.main-nav a {
-    color: #eceff1;
-    text-decoration: none;
-    padding: 10px 20px;
-    font-weight: bold;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-}
-
-.main-nav a:hover { background-color: #455a64; }
-.main-nav a.active { background-color: var(--primary-color); }
-
-main h2 { color: var(--primary-color); }
-
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-}
-
-fieldset {
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    padding: 1rem;
-}
-
-legend { font-weight: bold; color: var(--primary-color); }
-label { display: block; margin-bottom: 5px; font-weight: 600; }
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-input[readonly] { background-color: #f1f3f4; }
-#datasets-selection { max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }
-.agreement-text { white-space: pre-wrap; font-size: 0.9rem; height: 400px; overflow-y: auto; border: 1px solid #eee; padding: 1rem; }
-#json-preview { background-color: #263238; color: #eceff1; padding: 1rem; height: 250px; overflow-y: auto; }
-
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: bold;
+/* Stiliai konsultacijų puslapiui */
+.search-result-item {
+    padding: 8px;
     cursor: pointer;
+    border-bottom: 1px solid #eee;
 }
-button:hover { background-color: #004b8d; }
-
-.helper-text { background-color: #eef5f9; border-left: 4px solid var(--primary-color); padding: 15px; margin-bottom: 1rem; }
-
-.contracts-list-container .contract-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-left: 5px solid #ff9800; /* Pending status */
+.search-result-item:hover {
+    background-color: #f0f0f0;
+}
+.selected-items-list {
+    margin-top: 1rem;
     padding: 1rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
-.status-pending { color: #ff9800; font-weight: bold; }
-
-.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-.dashboard-card { background-color: white; border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; text-align: center; }
-.dashboard-card h3 { margin-top: 0; }
-.card-metric { font-size: 3rem; font-weight: 700; color: var(--primary-color); }
-.dashboard-card.status-total .card-metric { color: var(--primary-color); }
-.dashboard-card.status-pending .card-metric { color: #ff9800; }
-.dashboard-card.status-active .card-metric { color: #4caf50; }
+.selected-item {
+    background-color: #e0e0e0;
+    padding: 5px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 5px;
+    font-size: 0.9rem;
+}
+.provider-response {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #e8f5e9;
+    border-left: 3px solid #4caf50;
+    border-radius: 4px;
+}
